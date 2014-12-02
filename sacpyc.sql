@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 29-11-2014 a las 23:08:40
+-- Tiempo de generación: 02-12-2014 a las 23:28:54
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -65,6 +65,108 @@ IF mail LIKE '%@%.%' AND fono>0 AND nombre REGEXP '[a-zA-Z]+' AND apellido REGEX
 UPDATE cliente SET mail_cliente=mail, telefono_cliente=fono, nombre_cliente=nombre, apellido_cliente=apellido WHERE mail_cliente=correo;
 END IF$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `compraIngredienteAdd`(IN `proveedor` INT, IN `total` INT, IN `fecha` DATETIME)
+    NO SQL
+IF proveedor IN (SELECT IDCOMPRAUTENSILIO FROM compra_utensilio) AND total>0 THEN
+INSERT INTO compra_utensilio(IDPROVEEDORUTENSILIO,TOTAL,FECHA) VALUES(proveedor,total,fecha);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `compraIngredienteDel`(IN `id` INT)
+    NO SQL
+DELETE FROM compra_ingrediente WHERE idcompraingrediente=id$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `compraIngredienteGet`()
+    NO SQL
+SELECT * FROM compra_ingrediente$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `compraUtensilioAdd`(IN `proveedor` INT, IN `total` INT, IN `fecha` DATETIME)
+    NO SQL
+IF proveedor IN (SELECT IDPROVEEDORUTENSILIO FROM proveedor_utensilio) AND total>0 THEN
+INSERT INTO compra_utensilio(IDPROVEEDORUTENSILIO, TOTAL_COMPRA_UTENSILIO,FECHA_COMPRA_UTENSILIO) VALUES(proveedor,total,fecha);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `compraUtensilioDel`(IN `id` INT)
+    NO SQL
+DELETE FROM compra_utensilio WHERE IDCOMPRAUTENSILIO=id$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `compraUtensilioGet`()
+    NO SQL
+SELECT * FROM compra_utensilio$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `garzonAdd`(IN `mail` VARCHAR(45), IN `telefono` INT, IN `nombre` VARCHAR(25), IN `apellido` VARCHAR(25))
+    NO SQL
+IF mail LIKE '%@%.%' AND telefono>0 AND nombre REGEXP '[a-zA-Z]+' AND apellido REGEXP '[a-zA-Z]+' THEN
+INSERT INTO garzon(MAIL_GARZON,TELEFONO_GARZON,NOMBRE_GARZON,APELLIDO_GARZON) VALUES(mail,telefono,nombre,apellido);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `garzonDel`(IN `mail` VARCHAR(45))
+    NO SQL
+DELETE FROM garzon WHERE mail_garzon=mail$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `garzonGet`()
+    NO SQL
+sELECT * FROM garzon$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `garzonUpd`(IN `mail` VARCHAR(45), IN `mailNuevo` VARCHAR(45), IN `telefono` INT, IN `nombre` VARCHAR(25), IN `apellido` VARCHAR(25))
+    NO SQL
+IF mailNuevo LIKE '%@%.%' AND telefono>0 AND nombre REGEXP '[a-zA-Z]+' AND apellido REGEXP '[a-zA-Z]+' THEN
+UPDATE garzon SET mail_garzon=mailNuevo, telefono_garzon=telefono, nombre_garzon=nombre, apellido_garzon=apellido WHERE mail_garzon=mail;
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ingredienteAdd`(IN `nombre` VARCHAR(45), IN `stock` INT, IN `stockMin` INT)
+    NO SQL
+IF nombre REGEXP '[a-zA-Z]+' AND stock>0 AND stockMin>0 THEN
+INSERT INTO ingrediente(NOMBRE_INGREDIENTE,STOCK_INGREDIENTE,STOCK_MINIMO_INGREDIENTE) VALUES(nombre,stock,stockMin);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ingredienteDel`(IN `id` INT)
+    NO SQL
+DELETE FROM ingrediente WHERE IDINGREDIENTE=id$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ingredienteGet`()
+    NO SQL
+SELECT * FROM ingrediente$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `proveedorIngAdd`(IN `nombre` VARCHAR(45), IN `telefono` INT, IN `direccion` INT(45))
+    NO SQL
+IF nombre REGEXP '[a-zA-Z]+' AND telefono>0 AND direccion REGEXP '[a-zA-Z]+#[0-9]+' THEN
+INSERT INTo proveedor_ingrediente(NOMBRE_PROVEEDOR_INGREDIENTE,TELEFONO_PROVEEDOR_INGREDIENTE,DIRECCION_PROVEEDOR_INGREDIENTE) VALUES (nombre,telefono,direccion);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `proveedorIngDel`(IN `direccion` VARCHAR(45))
+    NO SQL
+DELETE FROM proveedor_ingrediente WHERE direccion_proveedor_ingrediente=direccion$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `proveedorIngGet`()
+    NO SQL
+SELECT * FROM proveedor_ingrediente$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `proveedorIngUpd`(IN `nombre` VARCHAR(45), IN `telefono` INT, IN `direccion` VARCHAR(45), IN `direccionNueva` VARCHAR(45))
+    NO SQL
+IF nombre REGEXP '[a-zA-Z]+' AND telefono>0 AND direccionNueva REGEXP '[a-zA-Z]+#[0-9]+' THEN
+UPDATE proveedor_ingrediente SET nombre_proveedor_ingrediente=nombre, telefono_proveedor_ingrediente=telefono, direccion_proveedor_ingrediente=direccionNueva WHERE direccion_proveedor_ingrediente=direccion;
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `proveedorUtenAdd`(IN `nombre` VARCHAR(45), IN `telefono` INT, IN `direccion` VARCHAR(45))
+    NO SQL
+IF nombre REGEXP '[a-zA-Z]+' AND telefono>0 AND direccion REGEXP '[a-zA-Z]+#[0-9]+' THEN
+INSERT INTo proveedor_utensilio(NOMBRE_PROVEEDOR_UTENSILIO,TELEFONO_PROVEEDOR_UTENSILIO,DIRECCION_PROVEEDOR_UTENSILIO) VALUES (nombre,telefono,direccion);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `proveedorUtenDel`(IN `direccion` VARCHAR(45))
+    NO SQL
+DELETE FROM proveedor_utensilio WHERE direccion_proveedor_utensilio=direccion$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `proveedorUtenGet`()
+    NO SQL
+SELECT * FROM proveedor_utensilio$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `proveedorUtenUpd`(IN `nombre` VARCHAR(45), IN `telefono` INT, IN `direccion` VARCHAR(45), IN `direccionNueva` VARCHAR(45))
+    NO SQL
+IF nombre REGEXP '[a-zA-Z]+' AND telefono>0 AND direccionNueva REGEXP '[a-zA-Z]+#[0-9]+' THEN
+UPDATE proveedor_utensilio SET nombre_proveedor_utensilio=nombre, telefono_proveedor_utensilio=telefono, direccion_proveedor_utensilio=direccionNueva WHERE direccion_proveedor_utensilio=direccion;
+END IF$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoItemAdd`(IN `nombre` VARCHAR(25))
     NO SQL
 IF nombre REGEXP '[a-zA-Z]+' THEN
@@ -73,7 +175,51 @@ END IF$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoItemDel`(IN `nombre` VARCHAR(25))
     NO SQL
-DELETE FROM tipo_item WHERE idtipo IN (SELECT idtipo FROM tipo_item WHERE nombre_tipo=nombre)$$
+DELETE FROM tipo_item WHERE nombre_tipo=nombre$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoItemGet`()
+    NO SQL
+SELECT * FROM tipo_item$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoItemUpd`(IN `nombre` VARCHAR(45), IN `nombreNuevo` VARCHAR(45))
+    NO SQL
+IF nombreNuevo REGEXP '[a-zA-Z]+' THEN
+UPDATE tipo_item SET nombre_tipo=nombreNuevo WHERE nombre_tipo=nombre;
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoUtensilioAdd`(IN `nombre` VARCHAR(25))
+    NO SQL
+IF nombre REGEXP '[a-zA-Z]+' THEN
+INSERT INTO TIPO_UTENSILIO(NOMBRE_TIPO_UTENSILIO) VALUES(nombre);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoUtensilioDel`(IN `nombre` VARCHAR(25))
+    NO SQL
+DELETE FROM tipo_utensilio WHERE nombre_tipo_utensilio=nombre$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoUtensilioGet`()
+    NO SQL
+SELECT * FROM tipo_utensilio$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoUtensilioUpd`(IN `nombre` VARCHAR(25), IN `nombreNuevo` VARCHAR(25))
+    NO SQL
+IF nombre REGEXP '[a-zA-Z]+' THEN
+UPDATE tipo_utensilio SET nombre_tipo_utensilio=nombreNuevo WHERE nombre_tipo_utensilio=nombre;
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `utensilioAdd`(IN `nombre` VARCHAR(25), IN `tipo` INT, IN `stock` INT, IN `stockMin` INT)
+    NO SQL
+IF nombre REGEXP '[a-zA-Z]+' AND stock>=0 AND stockMin>=0 AND tipo IN (SELECT IDTIPOUTENSILIO FROM tipo_utensilio) THEN
+INSERT INTO UTENSILIO(IDTIPOUTENSILIO,NOMBRE_UTENSILIO,STOCK_UTENSILIO,STOCK_MINIMO_UTENSILIO) VALUES (tipo,nombre,stock,stockMin);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `utensilioDel`(IN `nombre` VARCHAR(25))
+    NO SQL
+DELETE FROM utensilio WHERE nombre_utensilio=nombre$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `utensilioGet`()
+    NO SQL
+SELECT * FROM utensilio$$
 
 DELIMITER ;
 
@@ -161,7 +307,7 @@ CREATE TABLE IF NOT EXISTS `compra_ingrediente` (
 `IDCOMPRAINGREDIENTE` int(11) NOT NULL,
   `IDPROVEEDORINGREDIENTE` int(11) DEFAULT NULL,
   `TOTAL_COMPRA_INGREDIENTE` int(11) DEFAULT NULL,
-  `FECHA_COMPRA_INGREDIENTE` date DEFAULT NULL
+  `FECHA_COMPRA_INGREDIENTE` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Registro de las compras realizadas a cada proveedor.' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -228,6 +374,13 @@ CREATE TABLE IF NOT EXISTS `garzon` (
   `NOMBRE_GARZON` varchar(25) DEFAULT NULL,
   `APELLIDO_GARZON` varchar(25) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Datos necesarios para pedir disponibilidad de los garzones a';
+
+--
+-- Volcado de datos para la tabla `garzon`
+--
+
+INSERT INTO `garzon` (`MAIL_GARZON`, `TELEFONO_GARZON`, `NOMBRE_GARZON`, `APELLIDO_GARZON`) VALUES
+('maximiliano.perez@usach.cl', 98019877, 'Maximiliano', 'Perez');
 
 -- --------------------------------------------------------
 
@@ -343,7 +496,7 @@ CREATE TABLE IF NOT EXISTS `proveedor_utensilio` (
   `NOMBRE_PROVEEDOR_UTENSILIO` varchar(45) DEFAULT NULL,
   `TELEFONO_PROVEEDOR_UTENSILIO` int(11) DEFAULT NULL,
   `DIRECCION_PROVEEDOR_UTENSILIO` varchar(45) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -397,7 +550,7 @@ CREATE TABLE IF NOT EXISTS `tipo_evento` (
 CREATE TABLE IF NOT EXISTS `tipo_item` (
 `IDTIPO` int(11) NOT NULL,
   `NOMBRE_TIPO` varchar(25) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Representa a la categor?a de un plato, ejemplo: fondo, entra' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Representa a la categor?a de un plato, ejemplo: fondo, entra' AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -420,7 +573,7 @@ CREATE TABLE IF NOT EXISTS `tipo_menu` (
 CREATE TABLE IF NOT EXISTS `tipo_utensilio` (
 `IDTIPOUTENSILIO` int(11) NOT NULL,
   `NOMBRE_TIPO_UTENSILIO` varchar(25) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Generalizaci?n de un utencilio, ejemplo : bandeja, taza, etc' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Generalizaci?n de un utencilio, ejemplo : bandeja, taza, etc' AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -434,7 +587,7 @@ CREATE TABLE IF NOT EXISTS `utensilio` (
   `NOMBRE_UTENSILIO` varchar(25) DEFAULT NULL,
   `STOCK_UTENSILIO` int(11) DEFAULT NULL,
   `STOCK_MINIMO_UTENSILIO` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Corresponde a un objeto espec?fico, que ser? llevado a un ev' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Corresponde a un objeto espec?fico, que ser? llevado a un ev' AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -674,7 +827,7 @@ MODIFY `IDPROVEEDORINGREDIENTE` int(11) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT de la tabla `proveedor_utensilio`
 --
 ALTER TABLE `proveedor_utensilio`
-MODIFY `IDPROVEEDORUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `IDPROVEEDORUTENSILIO` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT de la tabla `seguimiento`
 --
@@ -694,7 +847,7 @@ MODIFY `IDTIPOEVENTO` int(11) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT de la tabla `tipo_item`
 --
 ALTER TABLE `tipo_item`
-MODIFY `IDTIPO` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `IDTIPO` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT de la tabla `tipo_menu`
 --
@@ -704,12 +857,12 @@ MODIFY `IDTIPOMENU` int(11) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT de la tabla `tipo_utensilio`
 --
 ALTER TABLE `tipo_utensilio`
-MODIFY `IDTIPOUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `IDTIPOUTENSILIO` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT de la tabla `utensilio`
 --
 ALTER TABLE `utensilio`
-MODIFY `IDUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `IDUTENSILIO` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- Restricciones para tablas volcadas
 --
