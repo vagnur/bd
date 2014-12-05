@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-12-2014 a las 21:37:09
+-- Tiempo de generación: 05-12-2014 a las 22:30:39
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -391,7 +391,6 @@ CREATE TABLE IF NOT EXISTS `administrador` (
 CREATE TABLE IF NOT EXISTS `agendamiento_evento` (
 `IDAGENDAMIENTOEVENTO` int(11) NOT NULL,
   `ID_COTIZACION` int(11) NOT NULL,
-  `IDTIPOEVENTO` int(11) DEFAULT NULL,
   `FECHA_AGENDAMIENTO_EVENTO` date DEFAULT NULL,
   `HORA_AGENDAMIENTO_EVENTO` time DEFAULT NULL,
   `DURACION_AGENDAMIENTO_EVENTO` int(11) DEFAULT NULL,
@@ -422,13 +421,13 @@ CREATE TABLE IF NOT EXISTS `auditoria` (
 --
 
 CREATE TABLE IF NOT EXISTS `cantidad_historica` (
-`IDHISTORICO` int(11) NOT NULL,
-  `IDTIPOEVENTO` int(11) NOT NULL,
-  `IDITEM` int(11) NOT NULL,
   `CANTIDAD` int(11) DEFAULT NULL,
   `NUMERO_PERSONAS` int(11) DEFAULT NULL,
-  `FECHA` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+  `FECHA` date DEFAULT NULL,
+  `IDTIPOEVENTO` int(11) NOT NULL,
+  `IDITEM` int(11) NOT NULL,
+  `IDHISTORICO` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -442,13 +441,6 @@ CREATE TABLE IF NOT EXISTS `cliente` (
   `NOMBRE_CLIENTE` varchar(25) DEFAULT NULL,
   `APELLIDO_CLIENTE` varchar(25) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Registro de los clientes que han realizado cotizaciones.';
-
---
--- Volcado de datos para la tabla `cliente`
---
-
-INSERT INTO `cliente` (`MAIL_CLIENTE`, `TELEFONO_CLIENTE`, `NOMBRE_CLIENTE`, `APELLIDO_CLIENTE`) VALUES
-('maximiliano.perez@usach.cl', 98019877, 'Maxo', 'Perez');
 
 -- --------------------------------------------------------
 
@@ -513,15 +505,7 @@ CREATE TABLE IF NOT EXISTS `cotizacion` (
   `IDSOLICITUDCOTIZACION` int(11) NOT NULL,
   `ESTADO_ACEPTACION` varchar(10) DEFAULT NULL,
   `VALOR_COTIZACION` int(11) DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Tabla que contiene las cotizaciones creadas como respuestas ' AUTO_INCREMENT=15 ;
-
---
--- Volcado de datos para la tabla `cotizacion`
---
-
-INSERT INTO `cotizacion` (`ID_COTIZACION`, `IDSOLICITUDCOTIZACION`, `ESTADO_ACEPTACION`, `VALOR_COTIZACION`) VALUES
-(13, 3, 'ingresada', 1000000),
-(14, 1, 'ingresada', 30000);
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabla que contiene las cotizaciones creadas como respuestas ' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -535,13 +519,6 @@ CREATE TABLE IF NOT EXISTS `garzon` (
   `NOMBRE_GARZON` varchar(25) DEFAULT NULL,
   `APELLIDO_GARZON` varchar(25) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Datos necesarios para pedir disponibilidad de los garzones a';
-
---
--- Volcado de datos para la tabla `garzon`
---
-
-INSERT INTO `garzon` (`MAIL_GARZON`, `TELEFONO_GARZON`, `NOMBRE_GARZON`, `APELLIDO_GARZON`) VALUES
-('maximiliano.perez@usach.cl', 98019877, 'Maximiliano', 'Perez');
 
 -- --------------------------------------------------------
 
@@ -566,14 +543,7 @@ CREATE TABLE IF NOT EXISTS `ingrediente` (
   `NOMBRE_INGREDIENTE` varchar(45) DEFAULT NULL,
   `STOCK_INGREDIENTE` int(11) DEFAULT NULL,
   `STOCK_MINIMO_INGREDIENTE` int(11) DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Representa el stock del ingrediente que hay hasta el momento' AUTO_INCREMENT=2 ;
-
---
--- Volcado de datos para la tabla `ingrediente`
---
-
-INSERT INTO `ingrediente` (`IDINGREDIENTE`, `NOMBRE_INGREDIENTE`, `STOCK_INGREDIENTE`, `STOCK_MINIMO_INGREDIENTE`) VALUES
-(1, 'harina', 10, 0);
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Representa el stock del ingrediente que hay hasta el momento' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -609,6 +579,7 @@ CREATE TABLE IF NOT EXISTS `ingrediente_item_especial` (
 
 CREATE TABLE IF NOT EXISTS `item` (
 `IDITEM` int(11) NOT NULL,
+  `IDTIPOEVENTO` int(11) NOT NULL,
   `IDTIPOMENU` int(11) DEFAULT NULL,
   `IDTIPO` int(11) DEFAULT NULL,
   `NOMBRE_ITEM` varchar(25) DEFAULT NULL
@@ -677,15 +648,7 @@ CREATE TABLE IF NOT EXISTS `seguimiento` (
   `ID_COTIZACION` int(11) NOT NULL,
   `FECHA_ACUERDO` date DEFAULT NULL,
   `FECHA_VENCIMIENTO` date DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='El seguimiento permite ver si el cliente ha respondido o no ' AUTO_INCREMENT=4 ;
-
---
--- Volcado de datos para la tabla `seguimiento`
---
-
-INSERT INTO `seguimiento` (`IDSEGUIMIENTO`, `ID_COTIZACION`, `FECHA_ACUERDO`, `FECHA_VENCIMIENTO`) VALUES
-(2, 13, '2014-12-19', '2014-12-22'),
-(3, 14, '2014-12-04', '2014-12-07');
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='El seguimiento permite ver si el cliente ha respondido o no ' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -703,16 +666,8 @@ CREATE TABLE IF NOT EXISTS `solicitud_de_cotizacion` (
   `COMENTARIOS_` varchar(250) DEFAULT NULL,
   `NOMBRE_EVENTO` varchar(25) DEFAULT NULL,
   `DIRECCION_EVENTO` varchar(45) DEFAULT NULL,
-  `ESTADO_SOLICITUD` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Tabla que contiene las solicitudes de cotizaci?n creadas por' AUTO_INCREMENT=4 ;
-
---
--- Volcado de datos para la tabla `solicitud_de_cotizacion`
---
-
-INSERT INTO `solicitud_de_cotizacion` (`IDSOLICITUDCOTIZACION`, `MAIL_CLIENTE`, `IDTIPOEVENTO`, `CANTIDAD_ASISTENTES`, `FECHA_TENTATIVA`, `DURACION_TENTATIVA`, `COMENTARIOS_`, `NOMBRE_EVENTO`, `DIRECCION_EVENTO`, `ESTADO_SOLICITUD`) VALUES
-(1, 'maximiliano.perez@usach.cl', 1, 8, '2014-12-10 10:00:00', 8, ';D', ':D', 'D:', 'generada'),
-(3, 'maximiliano.perez@usach.cl', 1, 10, NULL, 6, 'asd', '..asd:D', ':DD', 'ingresada');
+  `ESTADO_SOLICITUD` varchar(20) DEFAULT 'generada'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabla que contiene las solicitudes de cotizaci?n creadas por' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -723,14 +678,7 @@ INSERT INTO `solicitud_de_cotizacion` (`IDSOLICITUDCOTIZACION`, `MAIL_CLIENTE`, 
 CREATE TABLE IF NOT EXISTS `tipo_evento` (
 `IDTIPOEVENTO` int(11) NOT NULL,
   `NOMBRE_TIPO_EVENTO` varchar(25) DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='El tipo de evento al que corresponde el men?.\r\nEjemplo:' AUTO_INCREMENT=2 ;
-
---
--- Volcado de datos para la tabla `tipo_evento`
---
-
-INSERT INTO `tipo_evento` (`IDTIPOEVENTO`, `NOMBRE_TIPO_EVENTO`) VALUES
-(1, 'Matrimonio');
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='El tipo de evento al que corresponde el men?.\r\nEjemplo:' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -793,6 +741,17 @@ CREATE TABLE IF NOT EXISTS `utensilio_evento` (
   `UTENSILIOS_ROTOS` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Permite mantener el registro de la cantidad de elementos que';
 
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `utensilio_item`
+--
+
+CREATE TABLE IF NOT EXISTS `utensilio_item` (
+  `IDITEM` int(11) NOT NULL,
+  `IDUTENSILIO` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 --
 -- Índices para tablas volcadas
 --
@@ -807,7 +766,7 @@ ALTER TABLE `administrador`
 -- Indices de la tabla `agendamiento_evento`
 --
 ALTER TABLE `agendamiento_evento`
- ADD PRIMARY KEY (`IDAGENDAMIENTOEVENTO`), ADD KEY `FK_RELATIONSHIP_29` (`ID_COTIZACION`), ADD KEY `FK_RELATIONSHIP_33` (`IDTIPOEVENTO`);
+ ADD PRIMARY KEY (`IDAGENDAMIENTOEVENTO`), ADD KEY `FK_RELATIONSHIP_29` (`ID_COTIZACION`);
 
 --
 -- Indices de la tabla `auditoria`
@@ -966,6 +925,12 @@ ALTER TABLE `utensilio_evento`
  ADD PRIMARY KEY (`IDAGENDAMIENTOEVENTO`,`IDUTENSILIO`), ADD KEY `FK_RELATIONSHIP_13` (`IDUTENSILIO`);
 
 --
+-- Indices de la tabla `utensilio_item`
+--
+ALTER TABLE `utensilio_item`
+ ADD PRIMARY KEY (`IDITEM`,`IDUTENSILIO`), ADD KEY `FK_RELATIONSHIP_40` (`IDUTENSILIO`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -980,11 +945,6 @@ MODIFY `IDAGENDAMIENTOEVENTO` int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `auditoria`
 MODIFY `ID_AUDITORIA` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT de la tabla `cantidad_historica`
---
-ALTER TABLE `cantidad_historica`
-MODIFY `IDHISTORICO` int(11) NOT NULL AUTO_INCREMENT;
---
 -- AUTO_INCREMENT de la tabla `compra_ingrediente`
 --
 ALTER TABLE `compra_ingrediente`
@@ -998,12 +958,12 @@ MODIFY `IDCOMPRAUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT de la tabla `cotizacion`
 --
 ALTER TABLE `cotizacion`
-MODIFY `ID_COTIZACION` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=15;
+MODIFY `ID_COTIZACION` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `ingrediente`
 --
 ALTER TABLE `ingrediente`
-MODIFY `IDINGREDIENTE` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `IDINGREDIENTE` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `item`
 --
@@ -1028,17 +988,17 @@ MODIFY `IDPROVEEDORUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT de la tabla `seguimiento`
 --
 ALTER TABLE `seguimiento`
-MODIFY `IDSEGUIMIENTO` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+MODIFY `IDSEGUIMIENTO` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `solicitud_de_cotizacion`
 --
 ALTER TABLE `solicitud_de_cotizacion`
-MODIFY `IDSOLICITUDCOTIZACION` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+MODIFY `IDSOLICITUDCOTIZACION` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `tipo_evento`
 --
 ALTER TABLE `tipo_evento`
-MODIFY `IDTIPOEVENTO` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `IDTIPOEVENTO` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `tipo_item`
 --
@@ -1067,8 +1027,7 @@ MODIFY `IDUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
 -- Filtros para la tabla `agendamiento_evento`
 --
 ALTER TABLE `agendamiento_evento`
-ADD CONSTRAINT `FK_RELATIONSHIP_29` FOREIGN KEY (`ID_COTIZACION`) REFERENCES `cotizacion` (`ID_COTIZACION`) ON DELETE CASCADE ON UPDATE CASCADE,
-ADD CONSTRAINT `FK_RELATIONSHIP_33` FOREIGN KEY (`IDTIPOEVENTO`) REFERENCES `tipo_evento` (`IDTIPOEVENTO`) ON DELETE SET NULL ON UPDATE CASCADE;
+ADD CONSTRAINT `FK_RELATIONSHIP_29` FOREIGN KEY (`ID_COTIZACION`) REFERENCES `cotizacion` (`ID_COTIZACION`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `cantidad_historica`
@@ -1181,6 +1140,13 @@ ADD CONSTRAINT `FK_SE_CLASIFICA_SEGUN` FOREIGN KEY (`IDTIPOUTENSILIO`) REFERENCE
 ALTER TABLE `utensilio_evento`
 ADD CONSTRAINT `FK_RELATIONSHIP_13` FOREIGN KEY (`IDUTENSILIO`) REFERENCES `utensilio` (`IDUTENSILIO`) ON DELETE CASCADE ON UPDATE CASCADE,
 ADD CONSTRAINT `FK_UTILIZA` FOREIGN KEY (`IDAGENDAMIENTOEVENTO`) REFERENCES `agendamiento_evento` (`IDAGENDAMIENTOEVENTO`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `utensilio_item`
+--
+ALTER TABLE `utensilio_item`
+ADD CONSTRAINT `FK_RELATIONSHIP_33` FOREIGN KEY (`IDITEM`) REFERENCES `item` (`IDITEM`) ON DELETE CASCADE ON UPDATE CASCADE,
+ADD CONSTRAINT `FK_RELATIONSHIP_40` FOREIGN KEY (`IDUTENSILIO`) REFERENCES `utensilio` (`IDUTENSILIO`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
