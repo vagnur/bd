@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-12-2014 a las 22:30:39
+-- Tiempo de generación: 05-12-2014 a las 23:54:22
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -219,6 +219,16 @@ DELETE FROM item_especial WHERE id_item_especial=id$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `item_EspecialGet`()
     NO SQL
 SELECT * FROM item_especial$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `item_utensilioAdd`(IN `item` INT, IN `utensilio` INT, IN `cantidadItem` INT, IN `cantidadUtensilio` INT)
+    NO SQL
+IF item IN (SELECT iditem FROM item) AND utensilio IN (SELECT idutensilio FROM utensilio) AND cantidadItem>0 AND cantidadUtensilio>0 THEN
+INSERT INTO utensilo_item(iditem,idutensilio,cantidaditem,cantidadutensilio) VALUES (item,utensilio,cantidadItem,cantidadUtensilio);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `item_utensilioGet`()
+    NO SQL
+SELECT * FROM utensilio_item$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `proveedorIngAdd`(IN `nombre` VARCHAR(45), IN `telefono` INT, IN `direccion` INT(45))
     NO SQL
@@ -749,7 +759,9 @@ CREATE TABLE IF NOT EXISTS `utensilio_evento` (
 
 CREATE TABLE IF NOT EXISTS `utensilio_item` (
   `IDITEM` int(11) NOT NULL,
-  `IDUTENSILIO` int(11) NOT NULL
+  `IDUTENSILIO` int(11) NOT NULL,
+  `CANTIDADITEM` int(11) DEFAULT NULL,
+  `CANTIDADUTENSILIO` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
