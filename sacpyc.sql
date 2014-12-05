@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-12-2014 a las 04:09:26
+-- Tiempo de generación: 05-12-2014 a las 21:37:09
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -79,6 +79,16 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `compraIngredienteGet`()
     NO SQL
 SELECT * FROM compra_ingrediente$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `compraIngrediente_ingredienteAdd`(IN `ingrediente` INT, IN `compra` INT, IN `cantidad` INT, IN `precio` INT)
+    NO SQL
+IF ingrediente IN (SELECT idingrediente FROM ingrediente) AND compra IN (SELECT icompraingrediente FROM compra_ingrediente) AND cantidad>0 AND precio>0 THEN
+INSERT INTO ingrediente(idingrediente,idcompraingrediente,cantidad_compra_ingrediente,precio_compra_ingrediente) VALUES(ingrediente,compra,cantidad,precio);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `compraIngrediente_ingredienteGet`()
+    NO SQL
+SELECT * FROM compra_ingrediente_ingrediente$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `compraUtensilioAdd`(IN `proveedor` INT, IN `total` INT, IN `fecha` DATETIME)
     NO SQL
 IF proveedor IN (SELECT IDPROVEEDORUTENSILIO FROM proveedor_utensilio) AND total>0 THEN
@@ -92,6 +102,26 @@ DELETE FROM compra_utensilio WHERE IDCOMPRAUTENSILIO=id$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `compraUtensilioGet`()
     NO SQL
 SELECT * FROM compra_utensilio$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `compraUtensilio_utensilioAdd`(IN `utensilio` INT, IN `compra` INT, IN `cantidad` INT, IN `precio` INT)
+    NO SQL
+IF utensilio IN (SELECT idutensilio FROM utensilio) AND compra IN (SELECT idcomprautensilio FROM compra_utensilio) AND cantidad>0 AND precio>0 THEN
+INSERT INTO compra_utensilio_utensilio(idutensilio,idcomprautensilio,cantidad_compra_utensilio,precio_compra_utensilio) VALUES(utensilio,compra,cantidad,precio);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `compraUtensilio_utensilioGet`()
+    NO SQL
+SELECT * FROM compra_utensilio_utensilio$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `compra_ingredienteAdd`(IN `ingrediente` INT, IN `compra` INT, IN `cantidad` INT, IN `precio` INT)
+    NO SQL
+IF ingrediente IN (SELECT idingrediente FROM ingrediente) AND compra IN (SELECT idcompraingrediente FROM compra_ingrediente) AND cantidad>0 and precio>0 THEN
+INSERT INTO compra_ingrediente_ingrediente(idingrediente,idcompraingrediente,cantidad_compra_ingrediente,precio_compra_ingrediente) VALUES(ingrediente,compra,cantidad,precio);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `compra_utensilioGet`()
+    NO SQL
+SELECT * FROM compra_utensilio_utensilio$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `cotizacionAdd`(IN `solicitud` INT, IN `valor` INT)
     NO SQL
@@ -130,7 +160,7 @@ END IF$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `ingredienteAdd`(IN `nombre` VARCHAR(45), IN `stock` INT, IN `stockMin` INT)
     NO SQL
-IF nombre REGEXP '[a-zA-Z]+' AND stock>0 AND stockMin>0 THEN
+IF nombre REGEXP '[a-zA-Z]+' AND stock>0 AND stockMin>=0 THEN
 INSERT INTO ingrediente(NOMBRE_INGREDIENTE,STOCK_INGREDIENTE,STOCK_MINIMO_INGREDIENTE) VALUES(nombre,stock,stockMin);
 END IF$$
 
@@ -141,6 +171,26 @@ DELETE FROM ingrediente WHERE IDINGREDIENTE=id$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `ingredienteGet`()
     NO SQL
 SELECT * FROM ingrediente$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ingrediente_itemAdd`(IN `item` INT, IN `ingrediente` INT, IN `cantidad` INT, IN `unidad` INT)
+    NO SQL
+IF item IN (SELECT iditem FROM item) AND ingrediente IN (SELECT idingrediente FROM ingrediente) AND cantidad>0 THEN
+INSERT INTO ingrediente_item(idingrediente,id_item_especial,cantidad_ingrediente_especial,unidad_ingrediente_especial) VALUES(item,ingrediente,cantidad,unidad);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ingrediente_itemEspecialAdd`(IN `item` INT, IN `ingrediente` INT, IN `cantidad` INT, IN `unidad` VARCHAR(10))
+    NO SQL
+IF item IN (SELECT id_item_especial FROM item_especial) AND ingrediente IN (SELECT idingrediente FROM ingrediente) AND cantidad>0 THEN
+INSERT INTO ingrediente_item_especial(idingrediente,id_item_especial,cantidad_ingrediente_especial,unidad_ingrediente_especial) VALUES(item,ingrediente,cantidad,unidad);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ingrediente_itemEspecialGet`()
+    NO SQL
+SELECT * FROM ingrediente_item_especial$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ingrediente_itemGet`()
+    NO SQL
+sELECT * FROM ingrediente_item$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `itemAdd`(IN `tipomenu` INT, IN `tipo` INT, IN `nombre` VARCHAR(25))
     NO SQL
@@ -155,6 +205,20 @@ DELETE FROM item WHERE iditem=id$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `itemGet`()
     NO SQL
 SELECT * FROM item$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `item_EspecialAdd`(IN `cotizacion` INT, IN `nombre` VARCHAR(25), IN `cantidad` INT, IN `precio` INT)
+    NO SQL
+IF cotizacion IN (SELECT id_cotizacion FROM cotizacion) AND nombre REGEXP '[a-zA-Z]+' AND cantidad>0 AND precio>0 THEN
+INSERT INTO item_especial(id_cotizacion,nombre_item,cantidad,precio) VALUES(cotizacion,nombre,cantidad,precio);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `item_EspecialDel`(IN `id` INT)
+    NO SQL
+DELETE FROM item_especial WHERE id_item_especial=id$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `item_EspecialGet`()
+    NO SQL
+SELECT * FROM item_especial$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `proveedorIngAdd`(IN `nombre` VARCHAR(45), IN `telefono` INT, IN `direccion` INT(45))
     NO SQL
@@ -196,9 +260,15 @@ IF nombre REGEXP '[a-zA-Z]+' AND telefono>0 AND direccionNueva REGEXP '[a-zA-Z]+
 UPDATE proveedor_utensilio SET nombre_proveedor_utensilio=nombre, telefono_proveedor_utensilio=telefono, direccion_proveedor_utensilio=direccionNueva WHERE direccion_proveedor_utensilio=direccion;
 END IF$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `solicitudAdd`(IN `mail` VARCHAR(45), IN `tipoEvento` INT, IN `asistentes` INT, IN `duracion` INT, IN `comentarios` VARCHAR(250), IN `nombre` VARCHAR(25), IN `direccion` VARCHAR(45))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `seguimientoGet`()
     NO SQL
-INSERT INTO `solicitud_de_cotizacion`(`MAIL_CLIENTE`, `IDTIPOEVENTO`, `CANTIDAD_ASISTENTES`, `DURACION_TENTATIVA`, `COMENTARIOS_`, `NOMBRE_EVENTO`, `DIRECCION_EVENTO`, `ESTADO_SOLICITUD`) VALUES(mail,tipoEvento,asistentes,duracion,comentarios,nombre,direccion,'ingresada');$$
+sELECT * FROM seguimiento$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `solicitudAdd`(IN `mail` VARCHAR(45), IN `tipoEvento` INT, IN `asistentes` INT, IN `duracion` INT, IN `comentarios` VARCHAR(250), IN `nombre` VARCHAR(25), IN `direccion` VARCHAR(45), IN `fecha` DATETIME)
+    NO SQL
+IF mail IN (SELECT mail_cliente FROM cliente) AND asistentes>0 AND duracion>0 THEN
+INSERT INTO `solicitud_de_cotizacion`(`MAIL_CLIENTE`, `IDTIPOEVENTO`, `CANTIDAD_ASISTENTES`,`FECHA_TENTATIVA`, `DURACION_TENTATIVA`, `COMENTARIOS_`, `NOMBRE_EVENTO`, `DIRECCION_EVENTO`, `ESTADO_SOLICITUD`) VALUES(mail,tipoEvento,asistentes,fecha,duracion,comentarios,nombre,direccion,'ingresada');
+END IF$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `solicitudDel`(IN `id` INT)
     NO SQL
@@ -496,7 +566,14 @@ CREATE TABLE IF NOT EXISTS `ingrediente` (
   `NOMBRE_INGREDIENTE` varchar(45) DEFAULT NULL,
   `STOCK_INGREDIENTE` int(11) DEFAULT NULL,
   `STOCK_MINIMO_INGREDIENTE` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Representa el stock del ingrediente que hay hasta el momento' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Representa el stock del ingrediente que hay hasta el momento' AUTO_INCREMENT=2 ;
+
+--
+-- Volcado de datos para la tabla `ingrediente`
+--
+
+INSERT INTO `ingrediente` (`IDINGREDIENTE`, `NOMBRE_INGREDIENTE`, `STOCK_INGREDIENTE`, `STOCK_MINIMO_INGREDIENTE`) VALUES
+(1, 'harina', 10, 0);
 
 -- --------------------------------------------------------
 
@@ -926,7 +1003,7 @@ MODIFY `ID_COTIZACION` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=15;
 -- AUTO_INCREMENT de la tabla `ingrediente`
 --
 ALTER TABLE `ingrediente`
-MODIFY `IDINGREDIENTE` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `IDINGREDIENTE` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT de la tabla `item`
 --
