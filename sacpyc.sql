@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-12-2014 a las 23:28:54
+-- Tiempo de generación: 05-12-2014 a las 04:09:26
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -93,6 +93,21 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `compraUtensilioGet`()
     NO SQL
 SELECT * FROM compra_utensilio$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `cotizacionAdd`(IN `solicitud` INT, IN `valor` INT)
+    NO SQL
+IF solicitud IN (SELECT idsolicitudcotizacion FROM solicitud_de_cotizacion) AND valor>0 THEN
+INSERT INTO cotizacion(IDSOLICITUDCOTIZACION,ESTADO_ACEPTACION,VALOR_COTIZACION) VALUES(solicitud,'ingresada',valor);
+INSERT INTO seguimiento(id_cotizacion,fecha_acuerdo,fecha_vencimiento) VALUES(LAST_INSERT_ID(),CURDATE(),CURDATE()+INTERVAL 3 DAY);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `cotizacionDel`(IN `id` INT)
+    NO SQL
+DELETE FROM cotizacion WHERE id_cotizacion=id$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `cotizacionGet`()
+    NO SQL
+SELECT * FROM cotizacion$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `garzonAdd`(IN `mail` VARCHAR(45), IN `telefono` INT, IN `nombre` VARCHAR(25), IN `apellido` VARCHAR(25))
     NO SQL
 IF mail LIKE '%@%.%' AND telefono>0 AND nombre REGEXP '[a-zA-Z]+' AND apellido REGEXP '[a-zA-Z]+' THEN
@@ -126,6 +141,20 @@ DELETE FROM ingrediente WHERE IDINGREDIENTE=id$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `ingredienteGet`()
     NO SQL
 SELECT * FROM ingrediente$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `itemAdd`(IN `tipomenu` INT, IN `tipo` INT, IN `nombre` VARCHAR(25))
+    NO SQL
+IF tipomenu IN (SELECT idtipomenu FROM tipo_menu) AND tipo IN (SELECT idtipo FROM tipo_item) AND nombre REGEXP '[a-zA-Z]+' THEN
+INSERT INTO item(IDTIPOMENU,IDTIPO,NOMBRE_ITEM) VALUES(tipomenu,tipo,nombre);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `itemDel`(IN `id` INT)
+    NO SQL
+DELETE FROM item WHERE iditem=id$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `itemGet`()
+    NO SQL
+SELECT * FROM item$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `proveedorIngAdd`(IN `nombre` VARCHAR(45), IN `telefono` INT, IN `direccion` INT(45))
     NO SQL
@@ -167,6 +196,38 @@ IF nombre REGEXP '[a-zA-Z]+' AND telefono>0 AND direccionNueva REGEXP '[a-zA-Z]+
 UPDATE proveedor_utensilio SET nombre_proveedor_utensilio=nombre, telefono_proveedor_utensilio=telefono, direccion_proveedor_utensilio=direccionNueva WHERE direccion_proveedor_utensilio=direccion;
 END IF$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `solicitudAdd`(IN `mail` VARCHAR(45), IN `tipoEvento` INT, IN `asistentes` INT, IN `duracion` INT, IN `comentarios` VARCHAR(250), IN `nombre` VARCHAR(25), IN `direccion` VARCHAR(45))
+    NO SQL
+INSERT INTO `solicitud_de_cotizacion`(`MAIL_CLIENTE`, `IDTIPOEVENTO`, `CANTIDAD_ASISTENTES`, `DURACION_TENTATIVA`, `COMENTARIOS_`, `NOMBRE_EVENTO`, `DIRECCION_EVENTO`, `ESTADO_SOLICITUD`) VALUES(mail,tipoEvento,asistentes,duracion,comentarios,nombre,direccion,'ingresada');$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `solicitudDel`(IN `id` INT)
+    NO SQL
+DELETE FROM solicitud_de_cotizacion WHERE idsolicitudcotizacion=id$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `solicitudGet`()
+    NO SQL
+SELECT * FROM solicitud_de_cotizacion$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoEventoAdd`(IN `nombre` VARCHAR(25))
+    NO SQL
+IF nombre REGEXP '[a-zA-Z]+' THEN
+INSERT INTO tipo_evento(NOMBRE_TIPO_EVENTO) VALUES(nombre);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoEventoDel`(IN `id` INT)
+    NO SQL
+delete from tipo_evento where idtipoevento=id$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoEventoGet`()
+    NO SQL
+SELECT * FROM tipo_evento$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoEventoUpd`(IN `id` INT, IN `nombreNuevo` VARCHAR(25))
+    NO SQL
+if nombreNuevo regexp '[a-zA-Z]+' THEN
+UPDATE tipo_evento set nombre_tipo_evento=nombreNuevo;
+END IF$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoItemAdd`(IN `nombre` VARCHAR(25))
     NO SQL
 IF nombre REGEXP '[a-zA-Z]+' THEN
@@ -186,6 +247,20 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoItemUpd`(IN `nombre` VARCHAR(45
 IF nombreNuevo REGEXP '[a-zA-Z]+' THEN
 UPDATE tipo_item SET nombre_tipo=nombreNuevo WHERE nombre_tipo=nombre;
 END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoMenuAdd`(IN `evento` INT, IN `nombre` VARCHAR(25))
+    NO SQL
+IF evento IN (SELECT idtipoevento FROM tipo_evento) AND nombre REGEXP '[a-zA-Z]+' THEN
+INSERT INTO tipo_menu(IDTIPOEVENTO,NOMBRE_TIPO_MENU) VALUES(evento,nombre);
+END IF$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoMenuDel`(IN `id` INT)
+    NO SQL
+DELETE FROM tipo_menu WHERE idtipomenu=id$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoMenuGet`()
+    NO SQL
+sELECT * FROM tipo_menu$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `tipoUtensilioAdd`(IN `nombre` VARCHAR(25))
     NO SQL
@@ -277,12 +352,13 @@ CREATE TABLE IF NOT EXISTS `auditoria` (
 --
 
 CREATE TABLE IF NOT EXISTS `cantidad_historica` (
+`IDHISTORICO` int(11) NOT NULL,
   `IDTIPOEVENTO` int(11) NOT NULL,
   `IDITEM` int(11) NOT NULL,
   `CANTIDAD` int(11) DEFAULT NULL,
   `NUMERO_PERSONAS` int(11) DEFAULT NULL,
   `FECHA` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -296,6 +372,13 @@ CREATE TABLE IF NOT EXISTS `cliente` (
   `NOMBRE_CLIENTE` varchar(25) DEFAULT NULL,
   `APELLIDO_CLIENTE` varchar(25) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Registro de los clientes que han realizado cotizaciones.';
+
+--
+-- Volcado de datos para la tabla `cliente`
+--
+
+INSERT INTO `cliente` (`MAIL_CLIENTE`, `TELEFONO_CLIENTE`, `NOMBRE_CLIENTE`, `APELLIDO_CLIENTE`) VALUES
+('maximiliano.perez@usach.cl', 98019877, 'Maxo', 'Perez');
 
 -- --------------------------------------------------------
 
@@ -360,7 +443,15 @@ CREATE TABLE IF NOT EXISTS `cotizacion` (
   `IDSOLICITUDCOTIZACION` int(11) NOT NULL,
   `ESTADO_ACEPTACION` varchar(10) DEFAULT NULL,
   `VALOR_COTIZACION` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabla que contiene las cotizaciones creadas como respuestas ' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Tabla que contiene las cotizaciones creadas como respuestas ' AUTO_INCREMENT=15 ;
+
+--
+-- Volcado de datos para la tabla `cotizacion`
+--
+
+INSERT INTO `cotizacion` (`ID_COTIZACION`, `IDSOLICITUDCOTIZACION`, `ESTADO_ACEPTACION`, `VALOR_COTIZACION`) VALUES
+(13, 3, 'ingresada', 1000000),
+(14, 1, 'ingresada', 30000);
 
 -- --------------------------------------------------------
 
@@ -496,7 +587,7 @@ CREATE TABLE IF NOT EXISTS `proveedor_utensilio` (
   `NOMBRE_PROVEEDOR_UTENSILIO` varchar(45) DEFAULT NULL,
   `TELEFONO_PROVEEDOR_UTENSILIO` int(11) DEFAULT NULL,
   `DIRECCION_PROVEEDOR_UTENSILIO` varchar(45) DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -509,7 +600,15 @@ CREATE TABLE IF NOT EXISTS `seguimiento` (
   `ID_COTIZACION` int(11) NOT NULL,
   `FECHA_ACUERDO` date DEFAULT NULL,
   `FECHA_VENCIMIENTO` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='El seguimiento permite ver si el cliente ha respondido o no ' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='El seguimiento permite ver si el cliente ha respondido o no ' AUTO_INCREMENT=4 ;
+
+--
+-- Volcado de datos para la tabla `seguimiento`
+--
+
+INSERT INTO `seguimiento` (`IDSEGUIMIENTO`, `ID_COTIZACION`, `FECHA_ACUERDO`, `FECHA_VENCIMIENTO`) VALUES
+(2, 13, '2014-12-19', '2014-12-22'),
+(3, 14, '2014-12-04', '2014-12-07');
 
 -- --------------------------------------------------------
 
@@ -527,8 +626,16 @@ CREATE TABLE IF NOT EXISTS `solicitud_de_cotizacion` (
   `COMENTARIOS_` varchar(250) DEFAULT NULL,
   `NOMBRE_EVENTO` varchar(25) DEFAULT NULL,
   `DIRECCION_EVENTO` varchar(45) DEFAULT NULL,
-  `ESTADO_SOLICITUD` varchar(20) DEFAULT 'generada'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabla que contiene las solicitudes de cotizaci?n creadas por' AUTO_INCREMENT=1 ;
+  `ESTADO_SOLICITUD` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Tabla que contiene las solicitudes de cotizaci?n creadas por' AUTO_INCREMENT=4 ;
+
+--
+-- Volcado de datos para la tabla `solicitud_de_cotizacion`
+--
+
+INSERT INTO `solicitud_de_cotizacion` (`IDSOLICITUDCOTIZACION`, `MAIL_CLIENTE`, `IDTIPOEVENTO`, `CANTIDAD_ASISTENTES`, `FECHA_TENTATIVA`, `DURACION_TENTATIVA`, `COMENTARIOS_`, `NOMBRE_EVENTO`, `DIRECCION_EVENTO`, `ESTADO_SOLICITUD`) VALUES
+(1, 'maximiliano.perez@usach.cl', 1, 8, '2014-12-10 10:00:00', 8, ';D', ':D', 'D:', 'generada'),
+(3, 'maximiliano.perez@usach.cl', 1, 10, NULL, 6, 'asd', '..asd:D', ':DD', 'ingresada');
 
 -- --------------------------------------------------------
 
@@ -539,7 +646,14 @@ CREATE TABLE IF NOT EXISTS `solicitud_de_cotizacion` (
 CREATE TABLE IF NOT EXISTS `tipo_evento` (
 `IDTIPOEVENTO` int(11) NOT NULL,
   `NOMBRE_TIPO_EVENTO` varchar(25) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='El tipo de evento al que corresponde el men?.\r\nEjemplo:' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='El tipo de evento al que corresponde el men?.\r\nEjemplo:' AUTO_INCREMENT=2 ;
+
+--
+-- Volcado de datos para la tabla `tipo_evento`
+--
+
+INSERT INTO `tipo_evento` (`IDTIPOEVENTO`, `NOMBRE_TIPO_EVENTO`) VALUES
+(1, 'Matrimonio');
 
 -- --------------------------------------------------------
 
@@ -550,7 +664,7 @@ CREATE TABLE IF NOT EXISTS `tipo_evento` (
 CREATE TABLE IF NOT EXISTS `tipo_item` (
 `IDTIPO` int(11) NOT NULL,
   `NOMBRE_TIPO` varchar(25) DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Representa a la categor?a de un plato, ejemplo: fondo, entra' AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Representa a la categor?a de un plato, ejemplo: fondo, entra' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -573,7 +687,7 @@ CREATE TABLE IF NOT EXISTS `tipo_menu` (
 CREATE TABLE IF NOT EXISTS `tipo_utensilio` (
 `IDTIPOUTENSILIO` int(11) NOT NULL,
   `NOMBRE_TIPO_UTENSILIO` varchar(25) DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Generalizaci?n de un utencilio, ejemplo : bandeja, taza, etc' AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Generalizaci?n de un utencilio, ejemplo : bandeja, taza, etc' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -587,7 +701,7 @@ CREATE TABLE IF NOT EXISTS `utensilio` (
   `NOMBRE_UTENSILIO` varchar(25) DEFAULT NULL,
   `STOCK_UTENSILIO` int(11) DEFAULT NULL,
   `STOCK_MINIMO_UTENSILIO` int(11) DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Corresponde a un objeto espec?fico, que ser? llevado a un ev' AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Corresponde a un objeto espec?fico, que ser? llevado a un ev' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -628,7 +742,7 @@ ALTER TABLE `auditoria`
 -- Indices de la tabla `cantidad_historica`
 --
 ALTER TABLE `cantidad_historica`
- ADD PRIMARY KEY (`IDTIPOEVENTO`,`IDITEM`), ADD KEY `FK_RELATIONSHIP_32` (`IDITEM`);
+ ADD PRIMARY KEY (`IDHISTORICO`), ADD KEY `FK_RELATIONSHIP_31` (`IDTIPOEVENTO`), ADD KEY `FK_RELATIONSHIP_32` (`IDITEM`);
 
 --
 -- Indices de la tabla `cliente`
@@ -789,6 +903,11 @@ MODIFY `IDAGENDAMIENTOEVENTO` int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `auditoria`
 MODIFY `ID_AUDITORIA` int(11) NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT de la tabla `cantidad_historica`
+--
+ALTER TABLE `cantidad_historica`
+MODIFY `IDHISTORICO` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT de la tabla `compra_ingrediente`
 --
 ALTER TABLE `compra_ingrediente`
@@ -802,7 +921,7 @@ MODIFY `IDCOMPRAUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT de la tabla `cotizacion`
 --
 ALTER TABLE `cotizacion`
-MODIFY `ID_COTIZACION` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `ID_COTIZACION` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=15;
 --
 -- AUTO_INCREMENT de la tabla `ingrediente`
 --
@@ -827,27 +946,27 @@ MODIFY `IDPROVEEDORINGREDIENTE` int(11) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT de la tabla `proveedor_utensilio`
 --
 ALTER TABLE `proveedor_utensilio`
-MODIFY `IDPROVEEDORUTENSILIO` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+MODIFY `IDPROVEEDORUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `seguimiento`
 --
 ALTER TABLE `seguimiento`
-MODIFY `IDSEGUIMIENTO` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `IDSEGUIMIENTO` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT de la tabla `solicitud_de_cotizacion`
 --
 ALTER TABLE `solicitud_de_cotizacion`
-MODIFY `IDSOLICITUDCOTIZACION` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `IDSOLICITUDCOTIZACION` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT de la tabla `tipo_evento`
 --
 ALTER TABLE `tipo_evento`
-MODIFY `IDTIPOEVENTO` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `IDTIPOEVENTO` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT de la tabla `tipo_item`
 --
 ALTER TABLE `tipo_item`
-MODIFY `IDTIPO` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `IDTIPO` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `tipo_menu`
 --
@@ -857,12 +976,12 @@ MODIFY `IDTIPOMENU` int(11) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT de la tabla `tipo_utensilio`
 --
 ALTER TABLE `tipo_utensilio`
-MODIFY `IDTIPOUTENSILIO` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `IDTIPOUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `utensilio`
 --
 ALTER TABLE `utensilio`
-MODIFY `IDUTENSILIO` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `IDUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- Restricciones para tablas volcadas
 --
