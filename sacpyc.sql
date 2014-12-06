@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-12-2014 a las 17:49:27
+-- Tiempo de generación: 06-12-2014 a las 18:50:02
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -524,10 +524,11 @@ CREATE TABLE IF NOT EXISTS `cotizacion` (
 --
 
 CREATE TABLE IF NOT EXISTS `garzon` (
-  `MAIL_GARZON` varchar(45) NOT NULL,
+  `MAIL_GARZON` varchar(45) DEFAULT NULL,
   `TELEFONO_GARZON` int(11) DEFAULT NULL,
   `NOMBRE_GARZON` varchar(25) DEFAULT NULL,
-  `APELLIDO_GARZON` varchar(25) DEFAULT NULL
+  `APELLIDO_GARZON` varchar(25) DEFAULT NULL,
+  `IDGARZON` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Datos necesarios para pedir disponibilidad de los garzones a';
 
 -- --------------------------------------------------------
@@ -538,7 +539,7 @@ CREATE TABLE IF NOT EXISTS `garzon` (
 
 CREATE TABLE IF NOT EXISTS `garzon_evento` (
   `IDAGENDAMIENTOEVENTO` int(11) NOT NULL,
-  `MAIL_GARZON` varchar(45) NOT NULL,
+  `IDGARZON` int(11) NOT NULL,
   `RESPUESTA` varchar(5) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Detalle de los garzones asignados para un evento.';
 
@@ -841,13 +842,13 @@ ALTER TABLE `cotizacion`
 -- Indices de la tabla `garzon`
 --
 ALTER TABLE `garzon`
- ADD PRIMARY KEY (`MAIL_GARZON`);
+ ADD PRIMARY KEY (`IDGARZON`);
 
 --
 -- Indices de la tabla `garzon_evento`
 --
 ALTER TABLE `garzon_evento`
- ADD PRIMARY KEY (`IDAGENDAMIENTOEVENTO`,`MAIL_GARZON`), ADD KEY `FK_ACEPTA_O_RECHAZA` (`MAIL_GARZON`);
+ ADD PRIMARY KEY (`IDAGENDAMIENTOEVENTO`,`IDGARZON`), ADD KEY `FK_ACEPTA_O_RECHAZA` (`IDGARZON`);
 
 --
 -- Indices de la tabla `ingrediente`
@@ -1099,7 +1100,7 @@ ADD CONSTRAINT `FK_RELATIONSHIP_30` FOREIGN KEY (`IDSOLICITUDCOTIZACION`) REFERE
 -- Filtros para la tabla `garzon_evento`
 --
 ALTER TABLE `garzon_evento`
-ADD CONSTRAINT `FK_ACEPTA_O_RECHAZA` FOREIGN KEY (`MAIL_GARZON`) REFERENCES `garzon` (`MAIL_GARZON`) ON DELETE CASCADE ON UPDATE CASCADE,
+ADD CONSTRAINT `FK_ACEPTA_O_RECHAZA` FOREIGN KEY (`IDGARZON`) REFERENCES `garzon` (`IDGARZON`) ON DELETE CASCADE ON UPDATE CASCADE,
 ADD CONSTRAINT `FK_RELATIONSHIP_10` FOREIGN KEY (`IDAGENDAMIENTOEVENTO`) REFERENCES `agendamiento_evento` (`IDAGENDAMIENTOEVENTO`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
