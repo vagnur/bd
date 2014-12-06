@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-12-2014 a las 01:12:50
+-- Tiempo de generación: 06-12-2014 a las 14:59:50
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -589,8 +589,6 @@ CREATE TABLE IF NOT EXISTS `ingrediente_item_especial` (
 
 CREATE TABLE IF NOT EXISTS `item` (
 `IDITEM` int(11) NOT NULL,
-  `IDTIPOEVENTO` int(11) NOT NULL,
-  `IDTIPOMENU` int(11) DEFAULT NULL,
   `IDTIPO` int(11) DEFAULT NULL,
   `NOMBRE_ITEM` varchar(25) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Un plato o bebida dentro de un men?.\r\n' AUTO_INCREMENT=1 ;
@@ -608,6 +606,17 @@ CREATE TABLE IF NOT EXISTS `item_especial` (
   `CANTIDAD` int(11) DEFAULT NULL,
   `PRECIO` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabla que almacena platos o bebidas pedidos de forma especia' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `item_menu`
+--
+
+CREATE TABLE IF NOT EXISTS `item_menu` (
+  `IDTIPOMENU` int(11) NOT NULL,
+  `IDITEM` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -862,13 +871,19 @@ ALTER TABLE `ingrediente_item_especial`
 -- Indices de la tabla `item`
 --
 ALTER TABLE `item`
- ADD PRIMARY KEY (`IDITEM`), ADD KEY `FK_RELATIONSHIP_2` (`IDTIPOMENU`), ADD KEY `FK_RELATIONSHIP_3` (`IDTIPO`);
+ ADD PRIMARY KEY (`IDITEM`), ADD KEY `FK_RELATIONSHIP_3` (`IDTIPO`);
 
 --
 -- Indices de la tabla `item_especial`
 --
 ALTER TABLE `item_especial`
  ADD PRIMARY KEY (`ID_ITEM_ESPECIAL`), ADD KEY `FK_RELATIONSHIP_28` (`ID_COTIZACION`);
+
+--
+-- Indices de la tabla `item_menu`
+--
+ALTER TABLE `item_menu`
+ ADD PRIMARY KEY (`IDTIPOMENU`,`IDITEM`), ADD KEY `FK_RELATIONSHIP_42` (`IDITEM`);
 
 --
 -- Indices de la tabla `item_solicitud_de_cotizacion`
@@ -1105,7 +1120,6 @@ ADD CONSTRAINT `FK_RELATIONSHIP_35` FOREIGN KEY (`ID_ITEM_ESPECIAL`) REFERENCES 
 -- Filtros para la tabla `item`
 --
 ALTER TABLE `item`
-ADD CONSTRAINT `FK_RELATIONSHIP_2` FOREIGN KEY (`IDTIPOMENU`) REFERENCES `tipo_menu` (`IDTIPOMENU`) ON DELETE SET NULL ON UPDATE CASCADE,
 ADD CONSTRAINT `FK_RELATIONSHIP_3` FOREIGN KEY (`IDTIPO`) REFERENCES `tipo_item` (`IDTIPO`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
@@ -1113,6 +1127,13 @@ ADD CONSTRAINT `FK_RELATIONSHIP_3` FOREIGN KEY (`IDTIPO`) REFERENCES `tipo_item`
 --
 ALTER TABLE `item_especial`
 ADD CONSTRAINT `FK_RELATIONSHIP_28` FOREIGN KEY (`ID_COTIZACION`) REFERENCES `cotizacion` (`ID_COTIZACION`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `item_menu`
+--
+ALTER TABLE `item_menu`
+ADD CONSTRAINT `FK_RELATIONSHIP_41` FOREIGN KEY (`IDTIPOMENU`) REFERENCES `tipo_menu` (`IDTIPOMENU`) ON DELETE CASCADE ON UPDATE CASCADE,
+ADD CONSTRAINT `FK_RELATIONSHIP_42` FOREIGN KEY (`IDITEM`) REFERENCES `item` (`IDITEM`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `item_solicitud_de_cotizacion`
@@ -1138,7 +1159,7 @@ ADD CONSTRAINT `FK_TIENE` FOREIGN KEY (`IDTIPOEVENTO`) REFERENCES `tipo_evento` 
 -- Filtros para la tabla `tipo_menu`
 --
 ALTER TABLE `tipo_menu`
-ADD CONSTRAINT `FK_RELATIONSHIP_27` FOREIGN KEY (`IDTIPOEVENTO`) REFERENCES `tipo_evento` (`IDTIPOEVENTO`) ON DELETE SET NULL ON UPDATE CASCADE;
+ADD CONSTRAINT `FK_RELATIONSHIP_27` FOREIGN KEY (`IDTIPOEVENTO`) REFERENCES `tipo_evento` (`IDTIPOEVENTO`) ON DELETE CASCADE ON UPDATE SET NULL;
 
 --
 -- Filtros para la tabla `utensilio`
