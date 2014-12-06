@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-12-2014 a las 18:50:02
+-- Tiempo de generación: 06-12-2014 a las 19:24:07
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -528,8 +528,8 @@ CREATE TABLE IF NOT EXISTS `garzon` (
   `TELEFONO_GARZON` int(11) DEFAULT NULL,
   `NOMBRE_GARZON` varchar(25) DEFAULT NULL,
   `APELLIDO_GARZON` varchar(25) DEFAULT NULL,
-  `IDGARZON` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Datos necesarios para pedir disponibilidad de los garzones a';
+`IDGARZON` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Datos necesarios para pedir disponibilidad de los garzones a' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -987,6 +987,11 @@ MODIFY `IDCOMPRAUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
 --
 ALTER TABLE `cotizacion`
 MODIFY `ID_COTIZACION` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT de la tabla `garzon`
+--
+ALTER TABLE `garzon`
+MODIFY `IDGARZON` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `ingrediente`
 --
