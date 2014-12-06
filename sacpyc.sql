@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-12-2014 a las 23:54:22
+-- Tiempo de generación: 06-12-2014 a las 01:12:50
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -709,7 +709,7 @@ CREATE TABLE IF NOT EXISTS `tipo_item` (
 
 CREATE TABLE IF NOT EXISTS `tipo_menu` (
 `IDTIPOMENU` int(11) NOT NULL,
-  `IDTIPOEVENTO` int(11) NOT NULL,
+  `IDTIPOEVENTO` int(11) DEFAULT NULL,
   `NOMBRE_TIPO_MENU` varchar(25) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='La categor?a de los platos que habr? en el men?.\r\nEjemp' AUTO_INCREMENT=1 ;
 
@@ -1138,7 +1138,7 @@ ADD CONSTRAINT `FK_TIENE` FOREIGN KEY (`IDTIPOEVENTO`) REFERENCES `tipo_evento` 
 -- Filtros para la tabla `tipo_menu`
 --
 ALTER TABLE `tipo_menu`
-ADD CONSTRAINT `FK_RELATIONSHIP_27` FOREIGN KEY (`IDTIPOEVENTO`) REFERENCES `tipo_evento` (`IDTIPOEVENTO`) ON DELETE CASCADE ON UPDATE CASCADE;
+ADD CONSTRAINT `FK_RELATIONSHIP_27` FOREIGN KEY (`IDTIPOEVENTO`) REFERENCES `tipo_evento` (`IDTIPOEVENTO`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `utensilio`
