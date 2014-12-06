@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-12-2014 a las 14:59:50
+-- Tiempo de generación: 06-12-2014 a las 17:49:27
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -1159,7 +1159,7 @@ ADD CONSTRAINT `FK_TIENE` FOREIGN KEY (`IDTIPOEVENTO`) REFERENCES `tipo_evento` 
 -- Filtros para la tabla `tipo_menu`
 --
 ALTER TABLE `tipo_menu`
-ADD CONSTRAINT `FK_RELATIONSHIP_27` FOREIGN KEY (`IDTIPOEVENTO`) REFERENCES `tipo_evento` (`IDTIPOEVENTO`) ON DELETE CASCADE ON UPDATE SET NULL;
+ADD CONSTRAINT `FK_RELATIONSHIP_27` FOREIGN KEY (`IDTIPOEVENTO`) REFERENCES `tipo_evento` (`IDTIPOEVENTO`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `utensilio`
