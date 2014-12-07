@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-12-2014 a las 16:21:15
+-- Tiempo de generación: 07-12-2014 a las 16:34:33
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -39,6 +39,8 @@ CREATE TABLE IF NOT EXISTS `administrador` (
 --
 
 INSERT INTO `administrador` (`CORREO_ADMIN`, `CLAVE_ADMIN`, `NOMBRE_ADMIN`, `APELLIDO`, `ROL`) VALUES
+('ariel.merino@usach.cl', 'admin', 'Ariel', 'Meriño', 'Admin'),
+('benjart91@gmail.com', 'admin', 'Benjamin', 'Ruiz-Tagle', 'Admin'),
 ('JJtagle@gmail.com', 'qwerty', 'Juan Jose', 'Ruiz-Tagle', 'Admin'),
 ('maximiliano.perez@usach.cl', 'qwerty', 'Maximiliano', 'Perez', 'Admin');
 
