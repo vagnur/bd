@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-12-2014 a las 01:29:53
+-- Tiempo de generación: 07-12-2014 a las 15:07:53
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -34,6 +34,24 @@ CREATE TABLE IF NOT EXISTS `administrador` (
   `ROL` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabla que guarda los datos para el login de los administrado';
 
+--
+-- Disparadores `administrador`
+--
+DELIMITER //
+CREATE TRIGGER `integridadAdmin` BEFORE INSERT ON `administrador`
+ FOR EACH ROW IF NEW.correo_admin NOT LIKE '%@%.%' THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadAdminUpd` BEFORE UPDATE ON `administrador`
+ FOR EACH ROW IF NEW.correo_admin NOT LIKE '%@%.%' THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -47,6 +65,24 @@ CREATE TABLE IF NOT EXISTS `agendamiento_evento` (
   `DURACION_AGENDAMIENTO_EVENTO` int(11) DEFAULT NULL,
   `ESTADO` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabla que almacena los datos relacionados al agendamiento de' AUTO_INCREMENT=1 ;
+
+--
+-- Disparadores `agendamiento_evento`
+--
+DELIMITER //
+CREATE TRIGGER `integridadAgenda` BEFORE INSERT ON `agendamiento_evento`
+ FOR EACH ROW IF NOT (NEW.duracion_agendamiento_evento>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadAgendaUpd` BEFORE UPDATE ON `agendamiento_evento`
+ FOR EACH ROW IF NOT (NEW.duracion_agendamiento_evento>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -80,6 +116,24 @@ CREATE TABLE IF NOT EXISTS `cantidad_historica` (
 `IDHISTORICO` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
+--
+-- Disparadores `cantidad_historica`
+--
+DELIMITER //
+CREATE TRIGGER `integridadCantidadHis` BEFORE INSERT ON `cantidad_historica`
+ FOR EACH ROW IF NOT (NEW.cantidad>0) AND NOT (NEW.numero_personas>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integtridadCanHisUpd` BEFORE UPDATE ON `cantidad_historica`
+ FOR EACH ROW IF NOT (NEW.cantidad>0) AND NOT (NEW.numero_personas>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -93,6 +147,31 @@ CREATE TABLE IF NOT EXISTS `cliente` (
   `APELLIDO_CLIENTE` varchar(25) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Registro de los clientes que han realizado cotizaciones.';
 
+--
+-- Volcado de datos para la tabla `cliente`
+--
+
+INSERT INTO `cliente` (`MAIL_CLIENTE`, `TELEFONO_CLIENTE`, `NOMBRE_CLIENTE`, `APELLIDO_CLIENTE`) VALUES
+('maxo.perez@usach.cl', 98019877, 'maxo', 'perez');
+
+--
+-- Disparadores `cliente`
+--
+DELIMITER //
+CREATE TRIGGER `integridadCliente` BEFORE INSERT ON `cliente`
+ FOR EACH ROW IF NOT (NEW.telefono_cliente>0) AND NEW.mail_cliente NOT LIKE '%@%.%' THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadClienteUpd` BEFORE UPDATE ON `cliente`
+ FOR EACH ROW IF NOT (NEW.telefono_cliente>0) AND NEW.mail_cliente NOT LIKE '%@%.%' THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -105,6 +184,24 @@ CREATE TABLE IF NOT EXISTS `compra_ingrediente` (
   `TOTAL_COMPRA_INGREDIENTE` int(11) DEFAULT NULL,
   `FECHA_COMPRA_INGREDIENTE` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Registro de las compras realizadas a cada proveedor.' AUTO_INCREMENT=1 ;
+
+--
+-- Disparadores `compra_ingrediente`
+--
+DELIMITER //
+CREATE TRIGGER `integridadCompraIng` BEFORE INSERT ON `compra_ingrediente`
+ FOR EACH ROW IF NOT (NEW.total_compra_ingrediente>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadCompraIngUpd` BEFORE UPDATE ON `compra_ingrediente`
+ FOR EACH ROW IF NOT (NEW.total_compra_ingrediente>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -128,6 +225,20 @@ CREATE TRIGGER `actualizarStockIngrediente` AFTER INSERT ON `compra_ingrediente_
  FOR EACH ROW UPDATE ingrediente SET stock_ingrediente=stock_ingrediente+(SELECT NEW.cantidad_compra_ingrediente) WHERE idingrediente=NEW.idingrediente
 //
 DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadCompraIngIng` BEFORE INSERT ON `compra_ingrediente_ingrediente`
+ FOR EACH ROW IF NOT (NEW.cantidad_compra_ingrediente>0) AND NOT (NEW.precio_compra_ingrediente>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadCompraIngIngUpd` BEFORE UPDATE ON `compra_ingrediente_ingrediente`
+ FOR EACH ROW IF NOT (NEW.cantidad_compra_ingrediente>0) AND NOT (NEW.precio_compra_ingrediente>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -141,6 +252,24 @@ CREATE TABLE IF NOT EXISTS `compra_utensilio` (
   `TOTAL_COMPRA_UTENSILIO` int(11) DEFAULT NULL,
   `FECHA_COMPRA_UTENSILIO` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
+-- Disparadores `compra_utensilio`
+--
+DELIMITER //
+CREATE TRIGGER `integridadCompraUtensilio` BEFORE INSERT ON `compra_utensilio`
+ FOR EACH ROW IF NOT (NEW.total_compra_utensilio>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadcomprautensilioUpd` BEFORE UPDATE ON `compra_utensilio`
+ FOR EACH ROW IF NOT (NEW.total_compra_utensilio>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -162,6 +291,20 @@ CREATE TABLE IF NOT EXISTS `compra_utensilio_utensilio` (
 DELIMITER //
 CREATE TRIGGER `actualizarStockUtensilio` AFTER INSERT ON `compra_utensilio_utensilio`
  FOR EACH ROW UPDATE utensilio SET stock_utensilio=stock_utensilio+(SELECT NEW.cantidad_compra_utensilio) WHERE idutensilio=NEW.idutensilio
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadCompraUtensilioUtensilio` BEFORE INSERT ON `compra_utensilio_utensilio`
+ FOR EACH ROW IF NOT (NEW.cantidad_compra_utensilio>0) AND NOT (NEW.precio_compra_utensilio>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadCompraUtensilioUtensilioUpd` BEFORE UPDATE ON `compra_utensilio_utensilio`
+ FOR EACH ROW IF NOT (NEW.cantidad_compra_utensilio>0) AND NOT (NEW.precio_compra_utensilio>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
 //
 DELIMITER ;
 
@@ -193,6 +336,20 @@ CREATE TRIGGER `generarSeguimiento` AFTER INSERT ON `cotizacion`
  FOR EACH ROW INSERT INTO seguimiento(id_cotizacion,fecha_acuerdo,fecha_vencimiento) VALUES(NEW.id_cotizacion,CURDATE(),CURDATE()+INTERVAL 3 DAY)
 //
 DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadCotizacionUpd` BEFORE UPDATE ON `cotizacion`
+ FOR EACH ROW IF NOT (NEW.valor_cotizacion>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integrididadCotizacion` BEFORE INSERT ON `cotizacion`
+ FOR EACH ROW IF NOT (NEW.valor_cotizacion>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -207,6 +364,24 @@ CREATE TABLE IF NOT EXISTS `garzon` (
   `APELLIDO_GARZON` varchar(25) DEFAULT NULL,
 `IDGARZON` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Datos necesarios para pedir disponibilidad de los garzones a' AUTO_INCREMENT=1 ;
+
+--
+-- Disparadores `garzon`
+--
+DELIMITER //
+CREATE TRIGGER `integridadGarzon` BEFORE INSERT ON `garzon`
+ FOR EACH ROW IF NOT (NEW.telefono_garzon>0) AND NEW.mail_garzon NOT LIKE '%@%.%' THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadGarzonUpd` BEFORE UPDATE ON `garzon`
+ FOR EACH ROW IF NOT (NEW.telefono_garzon>0) AND NEW.mail_garzon NOT LIKE '%@%.%' THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -234,6 +409,24 @@ CREATE TABLE IF NOT EXISTS `ingrediente` (
   `STOCK_MINIMO_INGREDIENTE` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Representa el stock del ingrediente que hay hasta el momento' AUTO_INCREMENT=1 ;
 
+--
+-- Disparadores `ingrediente`
+--
+DELIMITER //
+CREATE TRIGGER `integridadIngrediente` BEFORE INSERT ON `ingrediente`
+ FOR EACH ROW IF NOT (NEW.stock_ingrediente>=0) AND NOT (NEW.stock_minimo_ingrediente>=0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadIngredienteUpd` BEFORE UPDATE ON `ingrediente`
+ FOR EACH ROW IF NOT (NEW.stock_ingrediente>=0) AND NOT (NEW.stock_minimo_ingrediente>=0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -248,6 +441,24 @@ CREATE TABLE IF NOT EXISTS `ingrediente_item` (
   `IDITEM` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='La cantidad de un ingrediente con que se prepara un plato o ' AUTO_INCREMENT=1 ;
 
+--
+-- Disparadores `ingrediente_item`
+--
+DELIMITER //
+CREATE TRIGGER `integridadIngredienteItemUpd` BEFORE UPDATE ON `ingrediente_item`
+ FOR EACH ROW IF NOT (NEW.cantidad_ingrediente_especial>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadIntegridadItem` BEFORE INSERT ON `ingrediente_item`
+ FOR EACH ROW IF NOT (NEW.cantidad_ingrediente_especial>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -261,6 +472,24 @@ CREATE TABLE IF NOT EXISTS `ingrediente_item_especial` (
   `IDINGREDIENTE` int(11) NOT NULL,
   `ID_ITEM_ESPECIAL` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabla que almacena el detalle de la cantidad de todos los in' AUTO_INCREMENT=1 ;
+
+--
+-- Disparadores `ingrediente_item_especial`
+--
+DELIMITER //
+CREATE TRIGGER `integridadIngredienteItemEspecialUpd` BEFORE UPDATE ON `ingrediente_item_especial`
+ FOR EACH ROW IF NOT (NEW.cantidad_ingrediente_especial>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadIntedienteItemEspecial` BEFORE INSERT ON `ingrediente_item_especial`
+ FOR EACH ROW IF NOT (NEW.cantidad_ingrediente_especial>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -287,6 +516,24 @@ CREATE TABLE IF NOT EXISTS `item_especial` (
   `CANTIDAD` int(11) DEFAULT NULL,
   `PRECIO` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabla que almacena platos o bebidas pedidos de forma especia' AUTO_INCREMENT=1 ;
+
+--
+-- Disparadores `item_especial`
+--
+DELIMITER //
+CREATE TRIGGER `integridadItemEspecial` BEFORE INSERT ON `item_especial`
+ FOR EACH ROW IF NOT (NEW.cantidad>0) AND NOT (NEW.precio>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadItemEspecialUpd` BEFORE UPDATE ON `item_especial`
+ FOR EACH ROW IF NOT (NEW.cantidad>0) AND NOT (NEW.precio>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -322,6 +569,20 @@ CREATE TRIGGER `cantidadHistorica` AFTER UPDATE ON `item_solicitud_de_cotizacion
  FOR EACH ROW INSERT INTO cantidad_historica(cantidad,numero_personas,fecha,idtipoevento,iditem) VALUES(NEW.cantidad_item,(SELECT cantidad_asistentes FROM solicitud_de_cotizacion WHERE idsolicitudcotizacion=NEW.idsolicitudcotizacion),CURDATE(),(SELECT idtipoevento FROM solicitud_de_cotizacion WHERE idsolicitudcotizacion=NEW.idsolicitudcotizacion),NEW.iditem)
 //
 DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadItemSolicitudCotizacion` BEFORE INSERT ON `item_solicitud_de_cotizacion`
+ FOR EACH ROW IF NOT (NEW.cantidad_item>0) AND NOT (NEW.precio_item>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadItemSolicitudUpd` BEFORE UPDATE ON `item_solicitud_de_cotizacion`
+ FOR EACH ROW IF NOT (NEW.cantidad_item>0) AND NOT (NEW.precio_item>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -336,6 +597,24 @@ CREATE TABLE IF NOT EXISTS `proveedor_ingrediente` (
   `DIRECCION_PROVEEDOR_INGREDIENTE` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Registro de los proveedores asociados a la banqueter?a.' AUTO_INCREMENT=1 ;
 
+--
+-- Disparadores `proveedor_ingrediente`
+--
+DELIMITER //
+CREATE TRIGGER `integridadProveedorIng` BEFORE INSERT ON `proveedor_ingrediente`
+ FOR EACH ROW IF NOT (NEW.telefono_proveedor_ingrediente>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadProveedorIngUpd` BEFORE UPDATE ON `proveedor_ingrediente`
+ FOR EACH ROW IF NOT (NEW.telefono_proveedor_ingrediente>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -348,6 +627,24 @@ CREATE TABLE IF NOT EXISTS `proveedor_utensilio` (
   `TELEFONO_PROVEEDOR_UTENSILIO` int(11) DEFAULT NULL,
   `DIRECCION_PROVEEDOR_UTENSILIO` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
+-- Disparadores `proveedor_utensilio`
+--
+DELIMITER //
+CREATE TRIGGER `integridadProveedorUten` BEFORE INSERT ON `proveedor_utensilio`
+ FOR EACH ROW IF NOT (NEW.telefono_proveedor_utensilio>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadProveedorUtenUpd` BEFORE UPDATE ON `proveedor_utensilio`
+ FOR EACH ROW IF NOT (NEW.telefono_proveedor_utensilio>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -372,14 +669,39 @@ CREATE TABLE IF NOT EXISTS `solicitud_de_cotizacion` (
 `IDSOLICITUDCOTIZACION` int(11) NOT NULL,
   `MAIL_CLIENTE` varchar(45) NOT NULL,
   `IDTIPOEVENTO` int(11) DEFAULT NULL,
-  `CANTIDAD_ASISTENTES` int(11) DEFAULT NULL,
+  `CANTIDAD_ASISTENTES` int(11) unsigned DEFAULT NULL,
   `FECHA_TENTATIVA` datetime DEFAULT NULL,
-  `DURACION_TENTATIVA` int(11) DEFAULT NULL,
+  `DURACION_TENTATIVA` int(11) unsigned DEFAULT NULL,
   `COMENTARIOS_` varchar(250) DEFAULT NULL,
   `NOMBRE_EVENTO` varchar(25) DEFAULT NULL,
   `DIRECCION_EVENTO` varchar(45) DEFAULT NULL,
   `ESTADO_SOLICITUD` varchar(20) DEFAULT 'generada'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabla que contiene las solicitudes de cotizaci?n creadas por' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Tabla que contiene las solicitudes de cotizaci?n creadas por' AUTO_INCREMENT=2 ;
+
+--
+-- Volcado de datos para la tabla `solicitud_de_cotizacion`
+--
+
+INSERT INTO `solicitud_de_cotizacion` (`IDSOLICITUDCOTIZACION`, `MAIL_CLIENTE`, `IDTIPOEVENTO`, `CANTIDAD_ASISTENTES`, `FECHA_TENTATIVA`, `DURACION_TENTATIVA`, `COMENTARIOS_`, `NOMBRE_EVENTO`, `DIRECCION_EVENTO`, `ESTADO_SOLICITUD`) VALUES
+(1, 'maxo.perez@usach.cl', 1, 0, '2014-12-04 00:00:00', 0, 'asd', 'asd', 'asd', 'generada');
+
+--
+-- Disparadores `solicitud_de_cotizacion`
+--
+DELIMITER //
+CREATE TRIGGER `integridadSolicitudCoti` BEFORE INSERT ON `solicitud_de_cotizacion`
+ FOR EACH ROW IF NEW.mail_cliente NOT LIKE '%@%.%' AND NOT (NEW.cantidad_asistentes>0) AND (NEW.duracion_tentativa>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadSolicitudCotiUpd` BEFORE UPDATE ON `solicitud_de_cotizacion`
+ FOR EACH ROW IF NEW.mail_cliente NOT LIKE '%@%.%' AND NOT (NEW.cantidad_asistentes>0) AND (NEW.duracion_tentativa>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -391,7 +713,32 @@ CREATE TABLE IF NOT EXISTS `tipo_evento` (
 `IDTIPOEVENTO` int(11) NOT NULL,
   `NOMBRE_TIPO_EVENTO` varchar(25) DEFAULT NULL,
   `VISIBLE` tinyint(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='El tipo de evento al que corresponde el men?.\r\nEjemplo:' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='El tipo de evento al que corresponde el men?.\r\nEjemplo:' AUTO_INCREMENT=2 ;
+
+--
+-- Volcado de datos para la tabla `tipo_evento`
+--
+
+INSERT INTO `tipo_evento` (`IDTIPOEVENTO`, `NOMBRE_TIPO_EVENTO`, `VISIBLE`) VALUES
+(1, 'Matrimonio', 1);
+
+--
+-- Disparadores `tipo_evento`
+--
+DELIMITER //
+CREATE TRIGGER `integridadTipoEvento` BEFORE INSERT ON `tipo_evento`
+ FOR EACH ROW IF NEW.visible!=0 OR NEW.visible!=1 THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadTipoEventoUpd` BEFORE UPDATE ON `tipo_evento`
+ FOR EACH ROW IF NEW.visible!=0 OR NEW.visible!=1 THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -441,6 +788,24 @@ CREATE TABLE IF NOT EXISTS `utensilio` (
   `STOCK_MINIMO_UTENSILIO` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Corresponde a un objeto espec?fico, que ser? llevado a un ev' AUTO_INCREMENT=1 ;
 
+--
+-- Disparadores `utensilio`
+--
+DELIMITER //
+CREATE TRIGGER `integridadUtensilio` BEFORE INSERT ON `utensilio`
+ FOR EACH ROW IF NOT (NEW.stock_utensilio>=0) AND NOT (NEW.stock_minimo_utensilio>=0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadUtensilioUpd` BEFORE UPDATE ON `utensilio`
+ FOR EACH ROW IF NOT (NEW.stock_utensilio>=0) AND NOT (NEW.stock_minimo_utensilio>=0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -455,6 +820,29 @@ CREATE TABLE IF NOT EXISTS `utensilio_evento` (
   `IDAGENDAMIENTOEVENTO` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Permite mantener el registro de la cantidad de elementos que' AUTO_INCREMENT=1 ;
 
+--
+-- Disparadores `utensilio_evento`
+--
+DELIMITER //
+CREATE TRIGGER `integridadUtensilioEvento` BEFORE INSERT ON `utensilio_evento`
+ FOR EACH ROW IF NOT (NEW.utensilios_utilizados>0) AND NOT (NEW.utensilios_rotos>=0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadUtensilioEventoUpd` BEFORE UPDATE ON `utensilio_evento`
+ FOR EACH ROW IF NOT (NEW.utensilios_utilizados>0) AND NOT (NEW.utensilios_rotos>=0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `stockUtensilio` AFTER INSERT ON `utensilio_evento`
+ FOR EACH ROW UPDATE utensilio SET stock_utensilio=stock_utensilio-NEW.utensilios_rotos WHERE idutensilio=NEW.idutensilio
+//
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -468,6 +856,24 @@ CREATE TABLE IF NOT EXISTS `utensilio_item` (
   `IDITEM` int(11) NOT NULL,
   `IDUTENSILIO` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
+-- Disparadores `utensilio_item`
+--
+DELIMITER //
+CREATE TRIGGER `integridadUtensilioItem` BEFORE INSERT ON `utensilio_item`
+ FOR EACH ROW IF NOT (NEW.cantidaditem>0) AND NOT (NEW.cantidadutensilio>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER `integridadUtensilioItemUpd` BEFORE UPDATE ON `utensilio_item`
+ FOR EACH ROW IF NOT (NEW.cantidaditem>0) AND NOT (NEW.cantidadutensilio>0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
+END IF
+//
+DELIMITER ;
 
 --
 -- Índices para tablas volcadas
@@ -761,12 +1167,12 @@ MODIFY `IDSEGUIMIENTO` int(11) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT de la tabla `solicitud_de_cotizacion`
 --
 ALTER TABLE `solicitud_de_cotizacion`
-MODIFY `IDSOLICITUDCOTIZACION` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `IDSOLICITUDCOTIZACION` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT de la tabla `tipo_evento`
 --
 ALTER TABLE `tipo_evento`
-MODIFY `IDTIPOEVENTO` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `IDTIPOEVENTO` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT de la tabla `tipo_item`
 --
@@ -871,7 +1277,7 @@ ADD CONSTRAINT `FK_RELATIONSHIP_35` FOREIGN KEY (`ID_ITEM_ESPECIAL`) REFERENCES 
 -- Filtros para la tabla `item`
 --
 ALTER TABLE `item`
-ADD CONSTRAINT `FK_RELATIONSHIP_3` FOREIGN KEY (`IDTIPO`) REFERENCES `tipo_item` (`IDTIPO`) ON DELETE SET NULL ON UPDATE CASCADE;
+ADD CONSTRAINT `FK_RELATIONSHIP_3` FOREIGN KEY (`IDTIPO`) REFERENCES `tipo_item` (`IDTIPO`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `item_especial`
