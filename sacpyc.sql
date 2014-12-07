@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-12-2014 a las 01:22:23
+-- Tiempo de generación: 07-12-2014 a las 01:29:53
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -115,10 +115,10 @@ CREATE TABLE IF NOT EXISTS `compra_ingrediente` (
 CREATE TABLE IF NOT EXISTS `compra_ingrediente_ingrediente` (
   `CANTIDAD_COMPRA_INGREDIENTE` int(11) DEFAULT NULL,
   `PRECIO_COMPRA_INGREDIENTE` int(11) DEFAULT NULL,
-  `IDCOMPRAINGREDIENTEINGREDIENTE` int(11) NOT NULL,
+`IDCOMPRAINGREDIENTEINGREDIENTE` int(11) NOT NULL,
   `IDINGREDIENTE` int(11) NOT NULL,
   `IDCOMPRAINGREDIENTE` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Detalle de los ingredientes de una compra espec?fica.';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Detalle de los ingredientes de una compra espec?fica.' AUTO_INCREMENT=1 ;
 
 --
 -- Disparadores `compra_ingrediente_ingrediente`
@@ -151,10 +151,10 @@ CREATE TABLE IF NOT EXISTS `compra_utensilio` (
 CREATE TABLE IF NOT EXISTS `compra_utensilio_utensilio` (
   `CANTIDAD_COMPRA_UTENSILIO` int(11) DEFAULT NULL,
   `PRECIO_COMPRA_UTENSILIO` int(11) DEFAULT NULL,
-  `IDCOMPRAUTENSILIOUTENSILIO` int(11) NOT NULL,
+`IDCOMPRAUTENSILIOUTENSILIO` int(11) NOT NULL,
   `IDCOMPRAUTENSILIO` int(11) NOT NULL,
   `IDUTENSILIO` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Detalle de los utensilios comprados en una "compra" espec?fi';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Detalle de los utensilios comprados en una "compra" espec?fi' AUTO_INCREMENT=1 ;
 
 --
 -- Disparadores `compra_utensilio_utensilio`
@@ -216,10 +216,10 @@ CREATE TABLE IF NOT EXISTS `garzon` (
 
 CREATE TABLE IF NOT EXISTS `garzon_evento` (
   `RESPUESTA` varchar(5) DEFAULT NULL,
-  `IDGARZONEVENTO` int(11) NOT NULL,
+`IDGARZONEVENTO` int(11) NOT NULL,
   `IDAGENDAMIENTOEVENTO` int(11) NOT NULL,
   `IDGARZON` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Detalle de los garzones asignados para un evento.';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Detalle de los garzones asignados para un evento.' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -243,10 +243,10 @@ CREATE TABLE IF NOT EXISTS `ingrediente` (
 CREATE TABLE IF NOT EXISTS `ingrediente_item` (
   `CANTIDAD_INGREDIENTE_ESPECIAL` int(11) DEFAULT NULL,
   `UNIDAD_INGREDIENTE_ESPECIAL` varchar(10) DEFAULT NULL,
-  `IDINGREDIENTEITEM` int(11) NOT NULL,
+`IDINGREDIENTEITEM` int(11) NOT NULL,
   `IDINGREDIENTE` int(11) NOT NULL,
   `IDITEM` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='La cantidad de un ingrediente con que se prepara un plato o ';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='La cantidad de un ingrediente con que se prepara un plato o ' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -257,10 +257,10 @@ CREATE TABLE IF NOT EXISTS `ingrediente_item` (
 CREATE TABLE IF NOT EXISTS `ingrediente_item_especial` (
   `CANTIDAD_INGREDIENTE_ESPECIAL` int(11) DEFAULT NULL,
   `UNIDAD_INGREDIENTE_ESPECIAL` varchar(10) DEFAULT NULL,
-  `IDINGREDIENTEITEMESPECIAL` int(11) NOT NULL,
+`IDINGREDIENTEITEMESPECIAL` int(11) NOT NULL,
   `IDINGREDIENTE` int(11) NOT NULL,
   `ID_ITEM_ESPECIAL` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabla que almacena el detalle de la cantidad de todos los in';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabla que almacena el detalle de la cantidad de todos los in' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -295,10 +295,10 @@ CREATE TABLE IF NOT EXISTS `item_especial` (
 --
 
 CREATE TABLE IF NOT EXISTS `item_menu` (
-  `IDITEMMENU` int(11) NOT NULL,
+`IDITEMMENU` int(11) NOT NULL,
   `IDTIPOMENU` int(11) NOT NULL,
   `IDITEM` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -308,11 +308,11 @@ CREATE TABLE IF NOT EXISTS `item_menu` (
 
 CREATE TABLE IF NOT EXISTS `item_solicitud_de_cotizacion` (
   `CANTIDAD_ITEM` int(11) DEFAULT NULL,
-  `ITEMSOLICITUDCOTIZACION` int(11) NOT NULL,
+`ITEMSOLICITUDCOTIZACION` int(11) NOT NULL,
   `IDITEM` int(11) NOT NULL,
   `IDSOLICITUDCOTIZACION` int(11) NOT NULL,
   `PRECIO_ITEM` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='El detalle de la cantidad de ?tems pedidos en una cotizaci';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='El detalle de la cantidad de ?tems pedidos en una cotizaci' AUTO_INCREMENT=1 ;
 
 --
 -- Disparadores `item_solicitud_de_cotizacion`
@@ -450,10 +450,10 @@ CREATE TABLE IF NOT EXISTS `utensilio` (
 CREATE TABLE IF NOT EXISTS `utensilio_evento` (
   `UTENSILIOS_UTILIZADOS` int(11) DEFAULT NULL,
   `UTENSILIOS_ROTOS` int(11) DEFAULT NULL,
-  `IDUTENSILIOEVENTO` int(11) NOT NULL,
+`IDUTENSILIOEVENTO` int(11) NOT NULL,
   `IDUTENSILIO` int(11) NOT NULL,
   `IDAGENDAMIENTOEVENTO` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Permite mantener el registro de la cantidad de elementos que';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Permite mantener el registro de la cantidad de elementos que' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -464,10 +464,10 @@ CREATE TABLE IF NOT EXISTS `utensilio_evento` (
 CREATE TABLE IF NOT EXISTS `utensilio_item` (
   `CANTIDADITEM` int(11) DEFAULT NULL,
   `CANTIDADUTENSILIO` int(11) DEFAULT NULL,
-  `IDUTENSILIOITEM` int(11) NOT NULL,
+`IDUTENSILIOITEM` int(11) NOT NULL,
   `IDITEM` int(11) NOT NULL,
   `IDUTENSILIO` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
 -- Índices para tablas volcadas
@@ -678,10 +678,20 @@ MODIFY `IDHISTORICO` int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `compra_ingrediente`
 MODIFY `IDCOMPRAINGREDIENTE` int(11) NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT de la tabla `compra_ingrediente_ingrediente`
+--
+ALTER TABLE `compra_ingrediente_ingrediente`
+MODIFY `IDCOMPRAINGREDIENTEINGREDIENTE` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT de la tabla `compra_utensilio`
 --
 ALTER TABLE `compra_utensilio`
 MODIFY `IDCOMPRAUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT de la tabla `compra_utensilio_utensilio`
+--
+ALTER TABLE `compra_utensilio_utensilio`
+MODIFY `IDCOMPRAUTENSILIOUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `cotizacion`
 --
@@ -693,10 +703,25 @@ MODIFY `ID_COTIZACION` int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `garzon`
 MODIFY `IDGARZON` int(11) NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT de la tabla `garzon_evento`
+--
+ALTER TABLE `garzon_evento`
+MODIFY `IDGARZONEVENTO` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT de la tabla `ingrediente`
 --
 ALTER TABLE `ingrediente`
 MODIFY `IDINGREDIENTE` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT de la tabla `ingrediente_item`
+--
+ALTER TABLE `ingrediente_item`
+MODIFY `IDINGREDIENTEITEM` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT de la tabla `ingrediente_item_especial`
+--
+ALTER TABLE `ingrediente_item_especial`
+MODIFY `IDINGREDIENTEITEMESPECIAL` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `item`
 --
@@ -707,6 +732,16 @@ MODIFY `IDITEM` int(11) NOT NULL AUTO_INCREMENT;
 --
 ALTER TABLE `item_especial`
 MODIFY `ID_ITEM_ESPECIAL` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT de la tabla `item_menu`
+--
+ALTER TABLE `item_menu`
+MODIFY `IDITEMMENU` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT de la tabla `item_solicitud_de_cotizacion`
+--
+ALTER TABLE `item_solicitud_de_cotizacion`
+MODIFY `ITEMSOLICITUDCOTIZACION` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `proveedor_ingrediente`
 --
@@ -752,6 +787,16 @@ MODIFY `IDTIPOUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
 --
 ALTER TABLE `utensilio`
 MODIFY `IDUTENSILIO` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT de la tabla `utensilio_evento`
+--
+ALTER TABLE `utensilio_evento`
+MODIFY `IDUTENSILIOEVENTO` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT de la tabla `utensilio_item`
+--
+ALTER TABLE `utensilio_item`
+MODIFY `IDUTENSILIOITEM` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- Restricciones para tablas volcadas
 --
