@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-12-2014 a las 17:07:19
+-- Tiempo de generación: 07-12-2014 a las 18:16:14
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -870,17 +870,18 @@ DELIMITER ;
 CREATE TABLE IF NOT EXISTS `tipo_evento` (
 `IDTIPOEVENTO` int(11) NOT NULL,
   `NOMBRE_TIPO_EVENTO` varchar(25) DEFAULT NULL,
-  `VISIBLE` tinyint(1) DEFAULT NULL
+  `VISIBLE` tinyint(1) DEFAULT NULL,
+  `DESRIPCION_EVENTO` varchar(1024) NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='El tipo de evento al que corresponde el men?.\r\nEjemplo:' AUTO_INCREMENT=5 ;
 
 --
 -- Volcado de datos para la tabla `tipo_evento`
 --
 
-INSERT INTO `tipo_evento` (`IDTIPOEVENTO`, `NOMBRE_TIPO_EVENTO`, `VISIBLE`) VALUES
-(2, 'Matrimonio', 1),
-(3, 'Cofee Break', 0),
-(4, 'Cumpleaños', 1);
+INSERT INTO `tipo_evento` (`IDTIPOEVENTO`, `NOMBRE_TIPO_EVENTO`, `VISIBLE`, `DESRIPCION_EVENTO`) VALUES
+(2, 'Matrimonio', 1, 'Platos y bebidas pensados para tener una agradable velada en el inicio de su nueva vida'),
+(3, 'Cofee Break', 0, 'Pensado en desayunos y onces de oficina'),
+(4, 'Cumpleaños', 1, 'Niños, adultos y adultos mayores. Tenemos platos pensados para todas las edades y todos los gustos');
 
 --
 -- Disparadores `tipo_evento`
@@ -894,7 +895,7 @@ END IF
 DELIMITER ;
 DELIMITER //
 CREATE TRIGGER `integridadTipoEventoUpd` BEFORE UPDATE ON `tipo_evento`
- FOR EACH ROW IF NEW.visible!=0 OR NEW.visible!=1 THEN
+ FOR EACH ROW IF NEW.visible!=0 AND NEW.visible!=1 THEN
 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Datos no validos';
 END IF
 //
