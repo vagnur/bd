@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-12-2014 a las 16:34:33
+-- Tiempo de generación: 07-12-2014 a las 17:07:19
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -1534,7 +1534,7 @@ ADD CONSTRAINT `FK_RELATIONSHIP_27` FOREIGN KEY (`IDTIPOEVENTO`) REFERENCES `tip
 -- Filtros para la tabla `utensilio`
 --
 ALTER TABLE `utensilio`
-ADD CONSTRAINT `FK_SE_CLASIFICA_SEGUN` FOREIGN KEY (`IDTIPOUTENSILIO`) REFERENCES `tipo_utensilio` (`IDTIPOUTENSILIO`) ON DELETE SET NULL ON UPDATE CASCADE;
+ADD CONSTRAINT `FK_SE_CLASIFICA_SEGUN` FOREIGN KEY (`IDTIPOUTENSILIO`) REFERENCES `tipo_utensilio` (`IDTIPOUTENSILIO`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `utensilio_evento`
