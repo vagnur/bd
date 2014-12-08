@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-12-2014 a las 09:00:36
+-- Tiempo de generación: 08-12-2014 a las 10:30:47
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -342,11 +342,8 @@ CREATE TABLE IF NOT EXISTS `compra_utensilio_utensilio` (
 --
 
 INSERT INTO `compra_utensilio_utensilio` (`CANTIDAD_COMPRA_UTENSILIO`, `PRECIO_COMPRA_UTENSILIO`, `IDCOMPRAUTENSILIOUTENSILIO`, `IDCOMPRAUTENSILIO`, `IDUTENSILIO`) VALUES
-(10, 3000, 1, 1, 2),
-(12, 10000, 2, 1, 2),
 (1, 500, 3, 2, 3),
-(3, 1500, 4, 1, 1),
-(10, 10000, 5, 2, 2);
+(3, 1500, 4, 1, 1);
 
 --
 -- Disparadores `compra_utensilio_utensilio`
@@ -675,11 +672,9 @@ CREATE TABLE IF NOT EXISTS `item_menu` (
 INSERT INTO `item_menu` (`IDITEMMENU`, `IDTIPOMENU`, `IDITEM`) VALUES
 (1, 2, 5),
 (2, 6, 11),
-(3, 4, 9),
 (4, 3, 5),
 (5, 2, 12),
-(6, 3, 10),
-(7, 4, 3);
+(6, 3, 10);
 
 -- --------------------------------------------------------
 
@@ -891,7 +886,6 @@ CREATE TABLE IF NOT EXISTS `tipo_evento` (
 
 INSERT INTO `tipo_evento` (`IDTIPOEVENTO`, `NOMBRE_TIPO_EVENTO`, `VISIBLE`, `DESRIPCION_EVENTO`) VALUES
 (2, 'Matrimonio', 1, 'Platos y bebidas pensados para tener una agradable velada en el inicio de su nueva vida'),
-(3, 'Cofee Break', 0, 'Pensado en desayunos y onces de oficina'),
 (4, 'Cumpleaños', 1, 'Niños, adultos y adultos mayores. Tenemos platos pensados para todas las edades y todos los gustos');
 
 --
@@ -954,7 +948,6 @@ INSERT INTO `tipo_menu` (`IDTIPOMENU`, `IDTIPOEVENTO`, `NOMBRE_TIPO_MENU`) VALUE
 (1, 2, 'Básico'),
 (2, 2, 'Estandar'),
 (3, 2, 'Premium'),
-(4, 3, 'Básico'),
 (5, 4, 'Básico'),
 (6, 4, 'Estandar'),
 (7, 4, 'Premium');
@@ -1000,7 +993,6 @@ CREATE TABLE IF NOT EXISTS `utensilio` (
 
 INSERT INTO `utensilio` (`IDUTENSILIO`, `IDTIPOUTENSILIO`, `NOMBRE_UTENSILIO`, `STOCK_UTENSILIO`, `STOCK_MINIMO_UTENSILIO`) VALUES
 (1, 1, 'Cuchara Sopera', 13, 5),
-(2, 4, 'Garza', 42, 3),
 (3, 4, 'Trago Largo', 11, 0),
 (4, 3, 'Tenedor Ensalada', 10, 4);
 
