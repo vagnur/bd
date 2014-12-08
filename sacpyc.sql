@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-12-2014 a las 06:32:47
+-- Tiempo de generación: 08-12-2014 a las 09:00:36
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -843,7 +843,7 @@ CREATE TABLE IF NOT EXISTS `solicitud_de_cotizacion` (
   `COMENTARIOS_` varchar(250) DEFAULT NULL,
   `NOMBRE_EVENTO` varchar(25) DEFAULT NULL,
   `DIRECCION_EVENTO` varchar(128) DEFAULT NULL,
-  `ESTADO_SOLICITUD` varchar(20) DEFAULT 'generada'
+  `ESTADO_SOLICITUD` varchar(20) DEFAULT 'pendiente'
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Tabla que contiene las solicitudes de cotizaci?n creadas por' AUTO_INCREMENT=4 ;
 
 --
